@@ -1,67 +1,764 @@
-<!-- اسکریپت Supabase -->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت | گروه مشاوران آمیتیس</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v7.3.0/dist/font-face.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- کتابخانه رسمی Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-  const SUPABASE_URL = 'https://zvtfkpdzewmrkziyustg.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT';
-  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<style>
+:root{
+  --cream:#F7F1E4;--cream-soft:#F0E7D3;--card:#FFFDF8;--navy:#182642;--navy-deep:#101D33;
+  --orange:#E98840;--orange-soft:#F6D9BA;--orange-tint:#FAEBD6;--green:#3E9B6C;--red:#C94F4F;
+  --line:rgba(24,38,66,.13);--text-2:#5a6580;--lat:'Space Grotesk',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Vazirmatn','Estedad',Tahoma,sans-serif;background:var(--cream);color:var(--navy);line-height:1.8;overflow-x:hidden}
+::selection{background:var(--orange);color:#fff}
+button{font:inherit;background:none;border:0;cursor:pointer;color:inherit}
+input,textarea,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.lat{font-family:var(--lat);direction:ltr;unicode-bidi:embed}
 
-  // ۱. ارسال پیام از فرم تماس
-  const contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+/* ورود */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(700px 400px at 85% 10%, var(--orange-tint), transparent 60%),radial-gradient(600px 500px at 10% 90%, var(--cream-soft), transparent 60%),var(--cream)}
+.login-card{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:26px;padding:44px 38px;box-shadow:0 30px 60px -30px rgba(24,38,66,.25);animation:pop .5s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{opacity:0;transform:translateY(24px)}}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.login-logo svg{width:46px;height:46px}
+.login-logo b{font-family:'Estedad';font-weight:800;font-size:1.15rem;display:block;line-height:1.3}
+.login-logo small{font-family:var(--lat);font-weight:700;font-size:.58rem;letter-spacing:.26em;color:var(--orange)}
+.login-card h1{font-family:'Estedad';font-weight:900;font-size:1.6rem;margin:22px 0 4px}
+.login-card>p{color:var(--text-2);font-size:.9rem;margin-bottom:26px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:700;font-size:.85rem;margin-bottom:7px}
+.field input{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 16px;font-size:.95rem;outline:0;transition:.25s}
+.field input:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-tint)}
+.login-btn{width:100%;background:var(--navy);color:var(--cream);font-weight:800;padding:14px;border-radius:13px;margin-top:8px;transition:.25s;font-family:'Estedad'}
+.login-btn:hover{background:var(--navy-deep);transform:translateY(-2px)}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(7px)}75%{transform:translateX(-7px)}}
 
-      const submitBtn = contactForm.querySelector('button[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
+/* اسکلت پنل */
+#panel{display:none;min-height:100vh}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:258px;flex-shrink:0;background:var(--navy-deep);color:var(--cream);display:flex;flex-direction:column;position:fixed;inset-block:0;inset-inline-start:0;z-index:40;transition:transform .35s cubic-bezier(.2,.8,.3,1)}
+.sb-head{display:flex;align-items:center;gap:12px;padding:24px 24px 20px;border-bottom:1px solid rgba(247,241,228,.1)}
+.sb-head svg{width:40px;height:40px}
+.sb-head b{font-family:'Estedad';font-weight:800;display:block;line-height:1.3}
+.sb-head small{font-family:var(--lat);font-weight:700;font-size:.55rem;letter-spacing:.26em;color:var(--orange)}
+.sb-nav{flex:1;padding:18px 14px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.sb-item{display:flex;align-items:center;gap:13px;padding:12px 15px;border-radius:12px;font-weight:600;font-size:.94rem;color:#aab3c7;transition:.25s;width:100%;text-align:right}
+.sb-item svg{width:19px;height:19px;stroke:currentColor;flex-shrink:0}
+.sb-item:hover{background:rgba(247,241,228,.06);color:var(--cream)}
+.sb-item.active{background:var(--orange);color:#fff}
+.sb-item .cnt{margin-inline-start:auto;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;min-width:21px;height:21px;border-radius:999px;display:grid;place-items:center;padding-inline:6px}
+.sb-item.active .cnt{background:rgba(255,255,255,.25)}
+.sb-foot{padding:16px 14px;border-top:1px solid rgba(247,241,228,.1)}
+.sb-exit{display:flex;align-items:center;gap:13px;padding:12px 15px;border-radius:12px;font-weight:600;font-size:.94rem;color:#d98a8a;transition:.25s;width:100%}
+.sb-exit:hover{background:rgba(201,79,79,.15)}
+.sb-exit svg{width:19px;height:19px}
 
-      const payload = {
-        name: document.getElementById('senderName')?.value.trim() || '',
-        subject: document.getElementById('senderSubject')?.value.trim() || '',
-        message: document.getElementById('senderMessage')?.value.trim() || ''
-      };
+.main{flex:1;margin-inline-start:258px;padding:28px clamp(20px,3.5vw,44px) 60px;min-width:0}
+.topbar{display:flex;align-items:center;gap:16px;margin-bottom:30px}
+.burger{display:none;padding:8px 6px}
+.burger span{display:block;width:23px;height:2.5px;background:var(--navy);border-radius:2px;margin:5px 0}
+.topbar h1{font-family:'Estedad';font-weight:900;font-size:clamp(1.4rem,3vw,2rem)}
+.topbar .crumb{font-size:.8rem;color:var(--text-2);margin-top:-4px}
+.top-actions{margin-inline-start:auto;display:flex;gap:10px;align-items:center}
+.icon-btn{width:42px;height:42px;border:1.5px solid var(--line);border-radius:12px;display:grid;place-items:center;background:var(--card);transition:.25s;position:relative}
+.icon-btn:hover{border-color:var(--orange);color:var(--orange)}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn .dot{position:absolute;top:9px;inset-inline-end:9px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid var(--card)}
 
-      const { error } = await db.from('messages').insert([payload]);
+.page{display:none;animation:fadeUp .4s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}}
 
-      if (error) {
-        alert('خطا در ارسال پیام. لطفا مجدداً تلاش کنید.');
-      } else {
-        alert('پیام شما با موفقیت ثبت شد.');
-        contactForm.reset();
-      }
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:26px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;position:relative;overflow:hidden;transition:.3s}
+.stat:hover{transform:translateY(-4px);box-shadow:0 16px 34px -18px rgba(24,38,66,.3)}
+.stat .lbl{font-size:.83rem;color:var(--text-2);font-weight:600}
+.stat .val{font-family:'Estedad';font-weight:900;font-size:2rem;line-height:1.4;display:flex;align-items:baseline;gap:8px}
+.stat-ico{position:absolute;top:18px;inset-inline-start:18px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--orange-tint)}
+.stat-ico svg{width:20px;height:20px;stroke:var(--orange)}
 
-      if (submitBtn) submitBtn.disabled = false;
-    });
-  }
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.card-head h3{font-family:'Estedad';font-weight:800;font-size:1.05rem}
+.card-head .more{font-size:.8rem;font-weight:700;color:var(--orange)}
+.card-body{padding:22px 24px}
 
-  // ۲. دریافت و رندر خدمات فعال در سایت اصلی
-  async function loadServices() {
-    const container = document.getElementById('servicesContainer');
-    if (!container) return;
+.msg-mini{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+.msg-mini:last-child{border-bottom:0;padding-bottom:2px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--orange-tint);color:var(--orange);display:grid;place-items:center;font-family:'Estedad';font-weight:800;flex-shrink:0;font-size:.95rem}
+.avatar.unread{background:var(--orange);color:#fff}
+.msg-mini .who{font-weight:700;font-size:.88rem}
+.msg-mini .txt{font-size:.8rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26ch}
+.msg-mini time{margin-inline-start:auto;font-size:.72rem;color:#98a0b3;flex-shrink:0}
 
-    const { data: services, error } = await db
-      .from('services')
-      .select('title, description')
-      .eq('active', true);
+.tbl-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.tabs{display:flex;gap:6px;background:var(--cream-soft);border-radius:12px;padding:5px}
+.tab{padding:7px 18px;border-radius:999px;font-weight:700;font-size:.83rem;color:var(--text-2);transition:.25s}
+.tab.active{background:var(--card);color:var(--navy);box-shadow:0 2px 8px rgba(24,38,66,.1)}
 
-    if (error || !services) return;
+.search{display:flex;align-items:center;gap:9px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:9px 15px;min-width:220px;transition:.25s}
+.search:focus-within{border-color:var(--orange)}
+.search svg{width:16px;height:16px;stroke:#98a0b3;flex-shrink:0}
+.search input{border:0;outline:0;background:none;width:100%;font-size:.88rem}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.87rem;padding:11px 22px;border-radius:12px;transition:.25s;font-family:'Estedad';white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:#d97a33;transform:translateY(-2px)}
+.btn-navy{background:var(--navy);color:var(--cream)}
+.btn-navy:hover{background:var(--navy-deep)}
+.btn-line{border:1.5px solid var(--line);background:var(--card)}
+.btn-line:hover{border-color:var(--orange);color:var(--orange)}
 
-    container.innerHTML = services.map(s => `
-      <div class="service-card">
-        <h3>${escapeHTML(s.title)}</h3>
-        <p>${escapeHTML(s.description)}</p>
+.tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+thead th{text-align:right;font-size:.78rem;font-weight:700;color:var(--text-2);padding:15px 20px;border-bottom:1.5px solid var(--line);background:#FBF7EE;white-space:nowrap}
+tbody td{padding:15px 20px;border-bottom:1px solid var(--line);font-size:.89rem;vertical-align:middle}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:var(--orange-tint)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.unread-row td:first-child{position:relative}
+tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-inline-start:6px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--orange)}
+.cell-strong{font-weight:700}
+.chip{font-size:.73rem;font-weight:800;padding:4px 13px;border-radius:999px;display:inline-block;white-space:nowrap}
+.chip.green{background:rgba(62,155,108,.13);color:var(--green)}
+.chip.gray{background:rgba(24,38,66,.08);color:var(--text-2)}
+.chip.orange{background:var(--orange-tint);color:var(--orange)}
+.row-acts{display:flex;gap:6px;justify-content:flex-end}
+.act{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;transition:.2s;border:1.5px solid var(--line)}
+.act svg{width:15px;height:15px}
+.act:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-tint)}
+.act.danger:hover{border-color:var(--red);color:var(--red);background:rgba(201,79,79,.08)}
+.empty{padding:50px;text-align:center;color:var(--text-2)}
+
+.switch{position:relative;width:44px;height:24px;flex-shrink:0;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.switch i{position:absolute;inset:0;background:#d5d9e2;border-radius:999px;transition:.3s}
+.switch i::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.switch input:checked+i{background:var(--orange)}
+.switch input:checked+i::after{transform:translateX(-20px)}
+
+.overlay{position:fixed;inset:0;background:rgba(16,29,51,.55);backdrop-filter:blur(4px);z-index:70;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:.3s}
+.overlay.open{opacity:1;visibility:visible}
+.modal{width:min(560px,100%);background:var(--card);border-radius:24px;max-height:90vh;overflow-y:auto;transform:translateY(24px) scale(.97);transition:.35s cubic-bezier(.2,.8,.3,1)}
+.overlay.open .modal{transform:none}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line)}
+.modal-head h3{font-family:'Estedad';font-weight:800;font-size:1.1rem}
+.modal-body{padding:24px 26px}
+.modal-foot{display:flex;gap:10px;justify-content:flex-start;padding:0 26px 24px}
+
+.view-msg-head{background:var(--orange-tint);border-radius:16px;padding:18px 20px;margin-bottom:18px}
+.view-msg-head b{font-family:'Estedad';font-weight:800}
+.view-msg-head .meta{font-size:.78rem;color:var(--text-2);margin-top:2px}
+
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.set-card{background:var(--card);border:1px solid var(--line);border-radius:20px}
+.set-card .card-head h3{display:flex;align-items:center;gap:10px}
+.set-card .card-head h3 svg{width:19px;height:19px;stroke:var(--orange)}
+
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,100px);background:var(--navy-deep);color:var(--cream);font-weight:700;font-size:.9rem;padding:13px 24px;border-radius:14px;z-index:90;transition:.4s cubic-bezier(.2,.8,.3,1);display:flex;align-items:center;gap:10px;box-shadow:0 16px 40px -12px rgba(16,29,51,.5);opacity:0;pointer-events:none}
+#toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+#toast svg{width:18px;height:18px;stroke:var(--orange)}
+
+@media(max-width:1024px){.grid-2,.set-grid{grid-template-columns:1fr}}
+@media(max-width:860px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:none;box-shadow:20px 0 60px rgba(16,29,51,.35)}
+  .main{margin-inline-start:0}
+  .burger{display:block}
+}
+.scrim{position:fixed;inset:0;background:rgba(16,29,51,.4);z-index:35;opacity:0;visibility:hidden;transition:.3s}
+.scrim.show{opacity:1;visibility:visible}
+</style>
+</head>
+<body>
+
+<!-- ورود ادمین -->
+<div id="login">
+  <form class="login-card" id="loginForm">
+    <div class="login-logo">
+      <svg viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="#182642"/><path d="M7 25h6l3-10 4.5 13 3-7.5H33" stroke="#E98840" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>گروه مشاوران آمیتیس</b><small>ADMIN PANEL</small></span>
+    </div>
+    <h1>ورود ادمین</h1>
+    <p>ایمیل و رمز عبور حساب ادمین Supabase را وارد کنید.</p>
+    <div class="field">
+      <label>ایمیل ادمین</label>
+      <input type="email" id="lu" placeholder="admin@amitis.ir" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label>رمز عبور</label>
+      <input type="password" id="lp" placeholder="••••••••" required autocomplete="current-password">
+    </div>
+    <button class="login-btn" type="submit" id="loginBtn">ورود به پنل</button>
+  </form>
+</div>
+
+<!-- پنل اصلی -->
+<div id="panel">
+<div class="scrim" id="scrim"></div>
+<div class="layout">
+
+  <!-- سایدبار -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <svg viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="#E98840"/><path d="M7 25h6l3-10 4.5 13 3-7.5H33" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>آمیتیس</b><small>ADMIN PANEL</small></span>
+    </div>
+    <nav class="sb-nav">
+      <button class="sb-item active" data-page="dash">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+        داشبورد
+      </button>
+      <button class="sb-item" data-page="msgs">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-8 8H4l2-3a8 8 0 1115-5z"/></svg>
+        پیام‌ها <span class="cnt" id="unreadBadge" style="display:none">۰</span>
+      </button>
+      <button class="sb-item" data-page="srv">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        خدمات
+      </button>
+      <button class="sb-item" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06A1.7 1.7 0 0015 19.4a1.7 1.7 0 00-1 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 009 19.4a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.51 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.56 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1z"/></svg>
+        تنظیمات
+      </button>
+    </nav>
+    <div class="sb-foot">
+      <button class="sb-exit" id="logoutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        خروج از حساب
+      </button>
+    </div>
+  </aside>
+
+  <!-- محتوا -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger"><span></span><span></span><span></span></button>
+      <div>
+        <h1 id="pageTitle">داشبورد</h1>
+        <div class="crumb">پنل مدیریت آمیتیس (Supabase)</div>
       </div>
-    `).join('');
+      <div class="top-actions">
+        <button class="icon-btn" id="bellBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+          <span class="dot" id="bellDot" style="display:none"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== داشبورد ===== -->
+    <section class="page active" id="page-dash">
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-8 8H4l2-3a8 8 0 1115-5z"/></svg></span>
+          <div class="lbl">کل پیام‌ها</div>
+          <div class="val"><span id="stMsgs">۰</span></div>
+        </div>
+        <div class="stat">
+          <span class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+          <div class="lbl">خدمات فعال</div>
+          <div class="val"><span id="stSrv">۰</span></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-head"><h3>آخرین پیام‌های دریافتی</h3><button class="more" data-goto="msgs">مشاهده همه</button></div>
+          <div class="card-body" id="dashMsgs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== پیام‌ها ===== -->
+    <section class="page" id="page-msgs">
+      <div class="tbl-tools">
+        <div class="tabs" id="msgTabs">
+          <button class="tab active" data-f="all">همه</button>
+          <button class="tab" data-f="unread">خوانده‌نشده</button>
+          <button class="tab" data-f="read">خوانده‌شده</button>
+        </div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="text" id="msgSearch" placeholder="جستجو...">
+        </label>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>فرستنده</th><th>موضوع</th><th>متن پیام</th><th>تاریخ ثبت</th><th>وضعیت</th><th></th></tr></thead>
+          <tbody id="msgRows"></tbody>
+        </table>
+        <div class="empty" id="msgEmpty" style="display:none">پیامی یافت نشد.</div>
+      </div>
+    </section>
+
+    <!-- ===== خدمات ===== -->
+    <section class="page" id="page-srv">
+      <div class="tbl-tools">
+        <button class="btn btn-orange" id="addSrvBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          افزودن خدمت جدید
+        </button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:60px">کد</th><th>عنوان خدمت</th><th>توضیحات</th><th style="width:90px">وضعیت</th><th></th></tr></thead>
+          <tbody id="srvRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== تنظیمات ===== -->
+    <section class="page" id="page-settings">
+      <div class="set-grid">
+        <div class="set-card">
+          <div class="card-head"><h3>راه‌های ارتباطی سایت</h3></div>
+          <div class="card-body">
+            <div class="field"><label>آدرس اینستاگرام</label><input type="url" id="setInsta" dir="ltr"></div>
+            <div class="field"><label>آدرس تلگرام</label><input type="url" id="setTg" dir="ltr"></div>
+            <div class="field"><label>شماره تماس</label><input type="tel" id="setPhone" dir="ltr"></div>
+            <button class="btn btn-navy" id="saveSettings">ذخیره تغییرات در دیتابیس</button>
+          </div>
+        </div>
+        <div class="set-card">
+          <div class="card-head"><h3>تغییر رمز عبور ادمین</h3></div>
+          <div class="card-body">
+            <div class="field"><label>رمز عبور جدید (حداقل ۸ کاراکتر)</label><input type="password" id="newPass" placeholder="••••••••"></div>
+            <button class="btn btn-navy" id="savePass">تغییر رمز عبور Supabase</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+</div>
+
+<!-- مودال -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">عنوان</h3>
+      <button class="act" id="modalClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<!-- توست -->
+<div id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastTxt">انجام شد</span></div>
+
+<script>
+/* ================= 1. پیکربندی SUPABASE ================= */
+const SUPABASE_URL = 'https://zvtfkpdzewmrkziyustg.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* متغیرهای داده‌ای */
+let msgs = [], srvs = [], settings = { insta: '', tg: '', phone: '' };
+let msgFilter = 'all', msgQ = '';
+
+const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+/* توست */
+let toastTimer;
+function toast(txt){
+  const t = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = txt;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* جلوگیری از حملات XSS */
+function escapeHTML(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+/* اعتبارسنجی و ایمن‌سازی URL */
+function safeURL(url) {
+  if (!url) return '#';
+  try {
+    const parsed = new URL(url);
+    if (['http:', 'https:'].includes(parsed.protocol)) {
+      return parsed.href;
+    }
+  } catch (e) {
+    // در صورت نامعتبر بودن URL
+  }
+  return '#';
+}
+
+/* ================= 2. احراز هویت (Supabase Auth) ================= */
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('lu').value.trim();
+  const password = document.getElementById('lp').value;
+  const btn = document.getElementById('loginBtn');
+
+  btn.textContent = 'در حال بررسی...'; btn.disabled = true;
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    toast('خطا در ورود: ' + error.message);
+    const c = document.querySelector('.login-card');
+    c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+    btn.textContent = 'ورود به پنل'; btn.disabled = false;
+  } else {
+    toast('ورود با موفقیت انجام شد');
+    initPanel();
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await db.auth.signOut();
+  location.reload();
+});
+
+/* بررسی نشست ادمین */
+async function checkAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    initPanel();
+  } else {
+    document.getElementById('login').style.display = 'grid';
+    document.getElementById('panel').style.display = 'none';
+  }
+}
+checkAuth();
+
+async function initPanel() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('panel').style.display = 'block';
+  await fetchAllData();
+}
+
+/* ================= 3. دریافت داده‌ها ================= */
+async function fetchMessages(){
+  const { data, error } = await db.from('messages').select('*').order('created_at', { ascending: false });
+  if(error){
+    console.error(error);
+    toast('خطا در دریافت پیام‌ها');
+    return;
+  }
+  msgs = data || [];
+}
+
+async function fetchServices(){
+  const { data, error } = await db.from('services').select('*').order('id', { ascending: true });
+  if(error){
+    console.error(error);
+    toast('خطا در دریافت خدمات');
+    return;
+  }
+  srvs = data || [];
+}
+
+async function fetchSettings(){
+  const { data, error } = await db.from('settings').select('*');
+  if(error){
+    console.error(error);
+    toast('خطا در دریافت تنظیمات');
+    return;
+  }
+  if (data) {
+    data.forEach(item => { settings[item.key] = item.value; });
+  }
+}
+
+async function fetchAllData() {
+  await Promise.all([fetchMessages(), fetchServices(), fetchSettings()]);
+  renderAll();
+}
+
+/* ================= 4. ناوبری و رابط کاربری ================= */
+const PAGE_TITLES = {dash:'داشبورد', msgs:'صندوق پیام‌ها', srv:'مدیریت خدمات', settings:'تنظیمات'};
+document.querySelectorAll('.sb-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+btn.dataset.page).classList.add('active');
+    document.getElementById('pageTitle').textContent = PAGE_TITLES[btn.dataset.page];
+    closeSidebar();
+  });
+});
+
+document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
+  const target = document.querySelector(`.sb-item[data-page="${b.dataset.goto}"]`);
+  if(target) target.click();
+}));
+
+const sidebar = document.getElementById('sidebar'), scrim = document.getElementById('scrim');
+document.getElementById('burger').addEventListener('click', () => { sidebar.classList.add('open'); scrim.classList.add('show'); });
+scrim.addEventListener('click', closeSidebar);
+function closeSidebar(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+
+const overlay = document.getElementById('overlay');
+function openModal(title, bodyHTML, footHTML=''){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHTML;
+  document.getElementById('modalFoot').innerHTML = footHTML;
+  overlay.classList.add('open');
+}
+function closeModal(){ overlay.classList.remove('open'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+
+/* ================= 5. رندر داشبورد ================= */
+function renderStats(){
+  document.getElementById('stMsgs').textContent = fa(msgs.length);
+  document.getElementById('stSrv').textContent = fa(srvs.filter(s=>s.active).length);
+  const un = msgs.filter(m=>!m.read).length;
+  document.getElementById('unreadBadge').textContent = fa(un);
+  document.getElementById('unreadBadge').style.display = un ? '' : 'none';
+  document.getElementById('bellDot').style.display = un ? '' : 'none';
+}
+
+function renderDashMsgs(){
+  const box = document.getElementById('dashMsgs');
+  const top = [...msgs].slice(0, 4);
+  box.innerHTML = top.map(m => `
+    <div class="msg-mini">
+      <span class="avatar ${m.read?'':'unread'}">${m.name ? escapeHTML(m.name.trim()[0]) : '؟'}</span>
+      <div><div class="who">${escapeHTML(m.name || 'بدون نام')}</div><div class="txt">${escapeHTML(m.subject || '')}</div></div>
+      <time>${new Date(m.created_at).toLocaleDateString('fa-IR')}</time>
+    </div>`).join('') || '<div class="empty">پیامی وجود ندارد.</div>';
+}
+
+/* ================= 6. مدیریت پیام‌ها ================= */
+document.querySelectorAll('#msgTabs .tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('#msgTabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); msgFilter = t.dataset.f; renderMsgs();
+}));
+document.getElementById('msgSearch').addEventListener('input', e => { msgQ = e.target.value.trim().toLowerCase(); renderMsgs(); });
+
+function renderMsgs(){
+  const rows = document.getElementById('msgRows');
+  let list = [...msgs];
+  if(msgFilter==='unread') list = list.filter(m=>!m.read);
+  if(msgFilter==='read')   list = list.filter(m=>m.read);
+  if(msgQ) {
+    list = list.filter(m => `${m.name} ${m.subject} ${m.message}`.toLowerCase().includes(msgQ));
   }
 
-  function escapeHTML(str = '') {
-    return String(str)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+  document.getElementById('msgEmpty').style.display = list.length ? 'none' : 'block';
+  rows.innerHTML = list.map(m => `
+    <tr class="${m.read?'':'unread-row'}">
+      <td class="cell-strong">${escapeHTML(m.name || '-')}</td>
+      <td>${escapeHTML(m.subject || '-')}</td>
+      <td style="max-width:260px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-2)">${escapeHTML(m.message || '')}</div></td>
+      <td class="lat" style="font-family:inherit">${new Date(m.created_at).toLocaleDateString('fa-IR')}</td>
+      <td><span class="chip ${m.read?'gray':'orange'}">${m.read?'خوانده‌شده':'جدید'}</span></td>
+      <td><div class="row-acts">
+        <button class="act" title="مشاهده" onclick="viewMsg(${m.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="act danger" title="حذف" onclick="delMsg(${m.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+window.viewMsg = async id => {
+  const m = msgs.find(x=>x.id===id); if(!m) return;
+
+  if(!m.read) {
+    const { error } = await db.from('messages').update({ read: true }).eq('id', id);
+    if(error) {
+      toast('خطا در تغییر وضعیت پیام');
+      return;
+    }
+    m.read = true;
+    renderStats(); renderMsgs();
   }
 
-  loadServices();
+  openModal(escapeHTML(m.subject || 'جزئیات پیام'), `
+    <div class="view-msg-head">
+      <b>${escapeHTML(m.name)}</b>
+      <div class="meta">تاریخ: ${new Date(m.created_at).toLocaleDateString('fa-IR')}</div>
+    </div>
+    <p style="color:#43506b">${escapeHTML(m.message)}</p>
+  `, `
+    <button class="btn btn-orange" onclick="window.open('${safeURL(settings.insta)}','_blank')">پاسخ در اینستاگرام</button>
+    <button class="btn btn-line" onclick="window.open('${safeURL(settings.tg)}','_blank')">پاسخ در تلگرام</button>
+    <button class="btn btn-line" onclick="closeModal()">بستن</button>
+  `);
+};
+
+window.delMsg = async id => {
+  if(!confirm('آیا از حذف این پیام مطمئن هستید؟')) return;
+
+  const { error } = await db.from('messages').delete().eq('id', id);
+  if(error){
+    console.error(error);
+    toast('حذف پیام انجام نشد.');
+    return;
+  }
+
+  msgs = msgs.filter(m=>m.id!==id);
+  renderAll(); 
+  toast('پیام با موفقیت حذف شد.');
+};
+
+/* ================= 7. مدیریت خدمات ================= */
+function renderSrv(){
+  document.getElementById('srvRows').innerHTML = srvs.map(s => `
+    <tr>
+      <td class="lat" style="color:var(--orange);font-weight:700">${String(s.id).padStart(2,'0')}</td>
+      <td class="cell-strong" style="max-width:230px">${escapeHTML(s.title)}</td>
+      <td style="max-width:340px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-2)">${escapeHTML(s.description)}</div></td>
+      <td><label class="switch">
+        <input type="checkbox" ${s.active?'checked':''} onchange="toggleSrv(${s.id}, this.checked)"><i></i>
+      </label></td>
+      <td><div class="row-acts">
+        <button class="act" title="ویرایش" onclick="editSrv(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.8 2.8 0 014 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button>
+        <button class="act danger" title="حذف" onclick="delSrv(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>
+      </div></td>
+    </tr>`).join('') || `<tr><td colspan="5"><div class="empty">هیچ خدمتی ثبت نشده است.</div></td></tr>`;
+}
+
+window.toggleSrv = async (id, on) => {
+  const { error } = await db.from('services').update({ active: on }).eq('id', id);
+  if(error){
+    toast('خطا در تغییر وضعیت خدمت');
+    fetchServices().then(renderSrv);
+    return;
+  }
+  const target = srvs.find(s=>s.id===id);
+  if(target) target.active = on;
+  renderStats(); toast(on ? 'خدمت فعال شد.' : 'خدمت غیرفعال شد.');
+};
+
+window.delSrv = async id => {
+  if(!confirm('آیا از حذف این خدمت مطمئن هستید؟')) return;
+  const { error } = await db.from('services').delete().eq('id', id);
+  if(error){
+    console.error(error);
+    toast('حذف خدمت انجام نشد.');
+    return;
+  }
+  srvs = srvs.filter(s=>s.id!==id);
+  renderAll(); toast('خدمت حذف شد.');
+};
+
+function srvForm(s={}){
+  return `
+    <div class="field"><label>عنوان خدمت</label><input id="fTitle" value="${escapeHTML(s.title||'')}"></div>
+    <div class="field"><label>توضیحات</label><textarea id="fDesc" rows="4" style="width:100%;border:1.5px solid var(--line);border-radius:13px;padding:12px 16px;outline:0;background:#fff;resize:vertical">${escapeHTML(s.description||'')}</textarea></div>
+    <div class="field"><label>وضعیت نمایش</label>
+      <label class="switch"><input type="checkbox" id="fActive" ${s.active!==false?'checked':''}><i></i></label>
+    </div>`;
+}
+
+window.editSrv = id => {
+  const s = srvs.find(x=>x.id===id);
+  openModal('ویرایش خدمت', srvForm(s), `
+    <button class="btn btn-navy" onclick="saveSrv(${id})">ذخیره تغییرات</button>
+    <button class="btn btn-line" onclick="closeModal()">انصراف</button>`);
+};
+
+document.getElementById('addSrvBtn').addEventListener('click', () => {
+  openModal('افزودن خدمت جدید', srvForm(), `
+    <button class="btn btn-orange" onclick="saveSrv(null)">افزودن خدمت</button>
+    <button class="btn btn-line" onclick="closeModal()">انصراف</button>`);
+});
+
+window.saveSrv = async id => {
+  const title = document.getElementById('fTitle').value.trim();
+  const description = document.getElementById('fDesc').value.trim();
+  const active = document.getElementById('fActive').checked;
+
+  if(!title){ toast('عنوان خدمت را وارد کنید.'); return; }
+
+  let error;
+  if(id){ 
+    ({ error } = await db.from('services').update({ title, description, active }).eq('id', id));
+  } else {
+    ({ error } = await db.from('services').insert([{ title, description, active }]));
+  }
+
+  if(error){
+    console.error(error);
+    toast('خطا در ذخیره اطلاعات خدمت');
+    return;
+  }
+
+  closeModal(); await fetchServices(); renderAll(); toast(id ? 'تغییرات ذخیره شد.' : 'خدمت جدید اضافه شد.');
+};
+
+/* ================= 8. تنظیمات و تغییر رمز عبور ================= */
+function loadSettingsFields() {
+  document.getElementById('setInsta').value = settings.insta || '';
+  document.getElementById('setTg').value = settings.tg || '';
+  document.getElementById('setPhone').value = settings.phone || '';
+}
+
+document.getElementById('saveSettings').addEventListener('click', async () => {
+  const insta = document.getElementById('setInsta').value.trim();
+  const tg = document.getElementById('setTg').value.trim();
+  const phone = document.getElementById('setPhone').value.trim();
+
+  const { error } = await db.from('settings').upsert([
+    { key: 'insta', value: insta },
+    { key: 'tg', value: tg },
+    { key: 'phone', value: phone }
+  ]);
+
+  if(error){
+    console.error(error);
+    toast('خطا در ذخیره تنظیمات');
+    return;
+  }
+
+  settings = { insta, tg, phone };
+  toast('تنظیمات در دیتابیس به‌روزرسانی شدند.');
+});
+
+document.getElementById('savePass').addEventListener('click', async () => {
+  const newPassword = document.getElementById('newPass').value.trim();
+
+  if(newPassword.length < 8){
+    toast('رمز عبور باید حداقل ۸ کاراکتر باشد.');
+    return;
+  }
+
+  const { error } = await db.auth.updateUser({ password: newPassword });
+
+  if(error){
+    console.error(error);
+    toast('تغییر رمز انجام نشد: ' + error.message);
+    return;
+  }
+
+  document.getElementById('newPass').value = '';
+  toast('رمز عبور با موفقیت تغییر کرد.');
+});
+
+/* ================= 9. اجرای نهایی ================= */
+function renderAll(){
+  renderStats(); 
+  renderDashMsgs(); 
+  renderMsgs(); 
+  renderSrv();
+  loadSettingsFields();
+}
 </script>
+</body>
+</html>
