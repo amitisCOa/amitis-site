@@ -1,0 +1,67 @@
+<!-- اسکریپت Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = 'https://zvtfkpdzewmrkziyustg.supabase.co/rest/v1/';
+  const SUPABASE_ANON_KEY = 'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ۱. ارسال پیام از فرم تماس
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+
+      const payload = {
+        name: document.getElementById('senderName')?.value.trim() || '',
+        subject: document.getElementById('senderSubject')?.value.trim() || '',
+        message: document.getElementById('senderMessage')?.value.trim() || ''
+      };
+
+      const { error } = await db.from('messages').insert([payload]);
+
+      if (error) {
+        alert('خطا در ارسال پیام. لطفا مجدداً تلاش کنید.');
+      } else {
+        alert('پیام شما با موفقیت ثبت شد.');
+        contactForm.reset();
+      }
+
+      if (submitBtn) submitBtn.disabled = false;
+    });
+  }
+
+  // ۲. دریافت و رندر خدمات فعال در سایت اصلی
+  async function loadServices() {
+    const container = document.getElementById('servicesContainer');
+    if (!container) return;
+
+    const { data: services, error } = await db
+      .from('services')
+      .select('title, description')
+      .eq('active', true);
+
+    if (error || !services) return;
+
+    container.innerHTML = services.map(s => `
+      <div class="service-card">
+        <h3>${escapeHTML(s.title)}</h3>
+        <p>${escapeHTML(s.description)}</p>
+      </div>
+    `).join('');
+  }
+
+  function escapeHTML(str = '') {
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  loadServices();
+</script>
