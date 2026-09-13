@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پشتیبانی و تیکت | گروه مشاوران آمیتیس</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v7.3.0/dist/font-face.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --cream:#F7F1E4;--cream-soft:#F0E7D3;--card:#FFFDF8;--navy:#182642;--navy-deep:#101D33;
+  --orange:#E98840;--orange-soft:#F6D9BA;--orange-tint:#FAEBD6;--green:#3E9B6C;--red:#C94F4F;
+  --line:rgba(24,38,66,.13);--text-2:#5a6580;--lat:'Space Grotesk',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Vazirmatn','Estedad',Tahoma,sans-serif;background:var(--cream);color:var(--navy);line-height:1.8;min-height:100vh}
+::selection{background:var(--orange);color:#fff}
+button{font:inherit;background:none;border:0;cursor:pointer;color:inherit}
+input,textarea{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.lat{font-family:var(--lat);direction:ltr;unicode-bidi:embed}
+
+/* هدر */
+header{background:var(--navy-deep);color:var(--cream);padding:34px 20px;text-align:center;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;border:2px solid rgba(233,136,64,.2);border-radius:50%}
+.logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo svg{width:46px;height:46px}
+.logo b{font-family:'Estedad';font-weight:800;display:block;font-size:1.15rem;text-align:right;line-height:1.3}
+.logo small{display:block;font-family:var(--lat);font-weight:700;font-size:.55rem;letter-spacing:.26em;color:var(--orange);text-align:right}
+header h1{font-family:'Estedad';font-weight:900;font-size:clamp(1.4rem,4vw,2rem)}
+header p{color:#aab3c7;font-size:.9rem;max-width:56ch;margin:8px auto 0}
+.back-link{position:absolute;top:22px;inset-inline-start:24px;font-size:.85rem;font-weight:700;color:#aab3c7;display:inline-flex;align-items:center;gap:6px;transition:.25s}
+.back-link:hover{color:var(--orange)}
+.back-link svg{width:16px;height:16px}
+
+main{max-width:1100px;margin:0 auto;padding:36px clamp(16px,4vw,40px) 80px}
+.notice{
+  display:flex;align-items:flex-start;gap:12px;background:var(--orange-tint);
+  border:1px solid var(--orange-soft);border-radius:16px;padding:16px 20px;
+  font-size:.88rem;margin-bottom:30px;
+}
+.notice svg{width:20px;height:20px;stroke:var(--orange);flex-shrink:0;margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 1.15fr;gap:22px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.card-head{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.card-head h2{font-family:'Estedad';font-weight:800;font-size:1.05rem}
+.card-head h2 svg{width:20px;height:20px;stroke:var(--orange);vertical-align:-4px;margin-inline-end:6px}
+.card-body{padding:24px}
+
+.field{margin-bottom:15px}
+.field label{display:block;font-weight:700;font-size:.84rem;margin-bottom:6px}
+.field input,.field textarea{
+  width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;
+  padding:11px 15px;font-size:.92rem;outline:0;transition:.25s;resize:vertical;
+}
+.field input:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-tint)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;
+  font-size:.9rem;padding:12px 24px;border-radius:13px;transition:.25s;font-family:'Estedad';width:100%;
+}
+.btn svg{width:16px;height:16px}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:#d97a33}
+.btn-orange:disabled{opacity:.6;cursor:wait}
+.btn-line{border:1.5px solid var(--line);background:var(--card)}
+.btn-line:hover{border-color:var(--orange);color:var(--orange)}
+
+/* لیست تیکت‌های من */
+.tk-item{
+  display:flex;align-items:center;gap:14px;padding:15px 6px;border-bottom:1px solid var(--line);
+  cursor:pointer;transition:.2s;width:100%;text-align:right;
+}
+.tk-item:last-child{border-bottom:0}
+.tk-item:hover{background:var(--orange-tint);border-radius:12px}
+.tk-item .ic{
+  width:42px;height:42px;border-radius:12px;background:var(--cream-soft);flex-shrink:0;
+  display:grid;place-items:center;
+}
+.tk-item .ic svg{width:19px;height:19px;stroke:var(--navy)}
+.tk-item b{font-size:.9rem;display:block}
+.tk-item small{font-size:.72rem;color:var(--text-2)}
+.tk-item .chip{margin-inline-start:auto;flex-shrink:0}
+.chip{font-size:.7rem;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.chip.orange{background:var(--orange-tint);color:var(--orange)}
+.chip.blue{background:rgba(24,38,66,.08);color:var(--text-2)}
+.chip.gray{background:rgba(24,38,66,.06);color:#98a0b3}
+.empty-box{text-align:center;padding:34px 16px;color:var(--text-2);font-size:.88rem}
+.empty-box svg{width:40px;height:40px;stroke:#c8cdd9;margin-bottom:10px}
+
+/* چت */
+.chat-overlay{position:fixed;inset:0;background:rgba(16,29,51,.55);backdrop-filter:blur(4px);z-index:60;display:none;justify-content:center;align-items:center;padding:18px}
+.chat-overlay.open{display:flex}
+.chat-box{width:min(680px,100%);height:min(640px,94vh);background:var(--cream);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;animation:pop .35s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{opacity:0;transform:translateY(22px)}}
+.chat-head{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+.chat-head b{font-family:'Estedad';font-weight:800;font-size:.95rem;display:block}
+.chat-head .meta{font-size:.72rem;color:var(--text-2)}
+.chat-head .chip{margin-inline-start:auto}
+.chat-close{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.chat-close:hover{border-color:var(--red);color:var(--red)}
+.chat-close svg{width:15px;height:15px}
+.chat-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.bub{max-width:78%;padding:11px 15px;border-radius:16px;font-size:.88rem;white-space:pre-wrap;word-break:break-word}
+.bub .tm{display:block;font-size:.66rem;opacity:.55;margin-top:5px}
+.bub.customer{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-start-start-radius:4px}
+.bub.admin{align-self:flex-end;background:var(--navy);color:var(--cream);border-start-end-radius:4px}
+.sys-line{align-self:center;font-size:.7rem;color:var(--text-2);background:var(--cream-soft);padding:3px 14px;border-radius:999px}
+.closed-bar{background:rgba(201,79,79,.1);color:var(--red);font-size:.8rem;font-weight:700;text-align:center;padding:9px;border-radius:12px;margin-bottom:10px}
+.chat-input{display:flex;gap:9px;padding:14px 16px;background:var(--card);border-top:1px solid var(--line)}
+.chat-input textarea{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:9px 13px;outline:0;resize:none;font-size:.88rem;height:46px}
+.chat-input textarea:focus{border-color:var(--orange)}
+.chat-input .send{width:46px;height:46px;border-radius:12px;background:var(--orange);display:grid;place-items:center;flex-shrink:0;transition:.2s}
+.chat-input .send:hover{background:#d97a33}
+.chat-input .send svg{width:18px;height:18px;stroke:#fff}
+.chat-input .send:disabled{opacity:.5;cursor:not-allowed}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,90px);background:var(--navy-deep);color:var(--cream);font-weight:700;font-size:.88rem;padding:12px 22px;border-radius:13px;z-index:90;transition:.4s cubic-bezier(.2,.8,.3,1);opacity:0}
+#toast.show{transform:translate(-50%,0);opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+    بازگشت به سایت
+  </a>
+  <div class="logo">
+    <svg viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="#E98840"/><path d="M7 25h6l3-10 4.5 13 3-7.5H33" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span><b>گروه مشاوران آمیتیس</b><small>SUPPORT TICKETS</small></span>
+  </div>
+  <h1>پشتیبانی آنلاین</h1>
+  <p>سؤال یا پروژه‌ی خود را به‌صورت تیکت ثبت کنید و پاسخ کارشناسان ما را همین‌جا دریافت کنید.</p>
+</header>
+
+<main>
+  <div class="notice">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+    <div>پاسخ کارشناسان معمولاً حداکثر ظرف <b>۲۴ ساعت کاری</b> ارسال می‌شود. اگر ظرف <b>۳ روز</b> پس از پاسخ ما، پیام جدیدی نفرستید، تیکت به‌صورت خودکار بسته می‌شود (با ارسال پیام دوباره باز می‌شود).</div>
+  </div>
+
+  <div class="grid">
+    <!-- ثبت تیکت جدید -->
+    <div class="card">
+      <div class="card-head"><h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+        ثبت تیکت جدید
+      </h2></div>
+      <div class="card-body">
+        <form id="tkForm">
+          <div class="field"><label>نام و نام خانوادگی *</label><input id="fName" required placeholder="مثلاً: دکتر رضا محمودی"></div>
+          <div class="field"><label>شماره تماس یا ایمیل</label><input id="fContact" dir="auto" placeholder="اختیاری — برای ارتباط سریع‌تر"></div>
+          <div class="field"><label>موضوع تیکت *</label><input id="fSubject" required placeholder="مثلاً: درخواست امکان‌سنجی کلینیک"></div>
+          <div class="field"><label>متن پیام *</label><textarea id="fMsg" rows="5" required placeholder="توضیحات کامل درخواست خود را بنویسید..."></textarea></div>
+          <button class="btn btn-orange" type="submit" id="tkSubmit">ارسال تیکت</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- تیکت‌های من -->
+    <div class="card">
+      <div class="card-head"><h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-8 8H4l2-3a8 8 0 1115-5z"/></svg>
+        تیکت‌های من
+      </h2></div>
+      <div class="card-body" id="myTkList"></div>
+    </div>
+  </div>
+</main>
+
+<!-- چت -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-box">
+    <div class="chat-head">
+      <div><b id="chSubject"></b><div class="meta" id="chMeta"></div></div>
+      <span class="chip blue" id="chStatus"></span>
+      <button class="chat-close" id="chClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="chat-body" id="chBody"></div>
+    <div class="chat-input">
+      <textarea id="chText" placeholder="پیام خود را بنویسید... (Enter برای ارسال)"></textarea>
+      <button class="send" id="chSend"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><span id="toastTxt"></span></div>
+
+<script>
+/* پیکربندی — همان پروژه‌ی پنل ادمین */
+const SUPABASE_URL = 'https://zvtfkpdzewmrkziyustg.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const LS_KEY = 'amitis_my_tickets';
+let mine = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+let openTk = null, chTimer = null;
+
+const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const esc = s => String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+const fmt = d => new Date(d).toLocaleDateString('fa-IR') + ' - ' + new Date(d).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+
+function toast(t){
+  const el = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = t;
+  el.classList.add('show');
+  clearTimeout(chTimer); chTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+
+const STATUS = {
+  open:             {cls:'orange', txt:'در انتظار پاسخ کارشناس'},
+  awaiting_customer:{cls:'blue',   txt:'پاسخ داده شد — نوبت شما'},
+  closed:           {cls:'gray',   txt:'بسته شده'},
+};
+
+/* ============ لیست تیکت‌های من ============ */
+async function renderMine(){
+  const box = document.getElementById('myTkList');
+  if(!mine.length){
+    box.innerHTML = `<div class="empty-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <div>هنوز تیکتی ثبت نکرده‌اید.<br>اولین تیکت خود را از فرم روبه‌رو ایجاد کنید.</div></div>`;
+    return;
+  }
+  // وضعیت لحظه‌ای از دیتابیس
+  const ids = mine.map(m=>m.id);
+  const { data } = await db.from('tickets').select('id,status,last_reply_at').in('id', ids);
+  const map = Object.fromEntries((data||[]).map(t=>[t.id,t]));
+  box.innerHTML = mine.map(m => {
+    const t = map[m.id] || {status:'closed'};
+    const st = STATUS[t.status] || STATUS.closed;
+    return `<button class="tk-item" onclick="openChat(${m.id})">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+      <span><b>${esc(m.subject)}</b><small class="lat" style="font-family:inherit">کد تیکت: ${fa(m.id)}</small></span>
+      <span class="chip ${st.cls}">${st.txt}</span>
+    </button>`;
+  }).join('');
+}
+
+/* ============ ساخت تیکت ============ */
+document.getElementById('tkForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('tkSubmit');
+  const name = document.getElementById('fName').value.trim();
+  const contact = document.getElementById('fContact').value.trim();
+  const subject = document.getElementById('fSubject').value.trim();
+  const body = document.getElementById('fMsg').value.trim();
+  if(!name || !subject || !body){ toast('لطفاً فیلدهای ستاره‌دار را کامل کنید.'); return; }
+
+  btn.disabled = true; btn.textContent = 'در حال ارسال...';
+  const { data: tk, error } = await db.from('tickets')
+    .insert([{ name, contact, subject }]).select().single();
+
+  if(error){ toast('خطا در ثبت تیکت. دوباره تلاش کنید.'); btn.disabled=false; btn.textContent='ارسال تیکت'; return; }
+
+  await db.from('ticket_messages').insert([{ ticket_id: tk.id, sender: 'customer', body }]);
+
+  mine.unshift({ id: tk.id, token: tk.guest_token, subject: tk.subject });
+  localStorage.setItem(LS_KEY, JSON.stringify(mine));
+
+  e.target.reset();
+  btn.disabled = false; btn.textContent = 'ارسال تیکت';
+  renderMine();
+  toast('تیکت شما با موفقیت ثبت شد. کد پیگیری: ' + fa(tk.id));
+  openChat(tk.id);
+});
+
+/* ============ چت ============ */
+async function openChat(id){
+  const rec = mine.find(m=>m.id===id);
+  if(!rec){ toast('این تیکت به دستگاه شما متصل نیست.'); return; }
+  openTk = rec;
+
+  const { data: tk } = await db.from('tickets').select('*').eq('id', id).single();
+  document.getElementById('chSubject').textContent = tk.subject;
+  document.getElementById('chMeta').textContent = 'کد تیکت: ' + fa(id) + ' - ثبت: ' + new Date(tk.created_at).toLocaleDateString('fa-IR');
+  setChip(tk.status);
+
+  await loadMsgs();
+  document.getElementById('chatOverlay').classList.add('open');
+}
+
+function setChip(st){
+  const el = document.getElementById('chStatus');
+  const s = STATUS[st] || STATUS.closed;
+  el.className = 'chip ' + s.cls; el.textContent = s.txt;
+}
+
+async function loadMsgs(){
+  if(!openTk) return;
+  const { data: msgs } = await db.from('ticket_messages')
+    .select('*').eq('ticket_id', openTk.id).order('created_at');
+  const { data: tk } = await db.from('tickets').select('status').eq('id', openTk.id).single();
+
+  const box = document.getElementById('chBody');
+  const closed = tk && tk.status === 'closed';
+  let html = '';
+  if(closed) html += `<div class="closed-bar">این تیکت به دلیل عدم پیگیری بسته شده است. با ارسال پیام جدید دوباره باز می‌شود.</div>`;
+  (msgs||[]).forEach(m => {
+    html += `<div class="bub ${m.sender}">${esc(m.body)}<span class="tm">${fmt(m.created_at)}${m.sender==='admin'?' - کارشناس آمیتیس':''}</span></div>`;
+  });
+  if(closed || !(msgs||[]).length && closed) {} // no-op
+  box.innerHTML = html || `<div class="sys-line">پیامی وجود ندارد</div>`;
+  setChip(tk ? tk.status : 'closed');
+  box.scrollTop = box.scrollHeight;
+
+  // قفل ورودی وقتی منتظر پاسخ مشتری نیست؟ — نه؛ مشتری همیشه می‌تواند بفرستد
+  document.getElementById('chText').disabled = false;
+  document.getElementById('chSend').disabled = false;
+}
+
+async function sendMsg(){
+  if(!openTk) return;
+  const ta = document.getElementById('chText');
+  const body = ta.value.trim();
+  if(!body) return;
+  ta.value = '';
+  const { error } = await db.from('ticket_messages')
+    .insert([{ ticket_id: openTk.id, sender: 'customer', body }]);
+  if(error){ toast('ارسال پیام انجام نشد.'); ta.value = body; return; }
+  await loadMsgs();
+  renderMine();
+}
+
+document.getElementById('chSend').addEventListener('click', sendMsg);
+document.getElementById('chText').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); }
+});
+document.getElementById('chClose').addEventListener('click', () => {
+  document.getElementById('chatOverlay').classList.remove('open');
+  openTk = null; renderMine();
+});
+document.getElementById('chatOverlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget){ e.currentTarget.classList.remove('open'); openTk = null; renderMine(); }
+});
+
+/* ============ چت زنده (Realtime) ============ */
+db.channel('customer-tickets')
+  .on('postgres_changes',
+    { event:'INSERT', schema:'public', table:'ticket_messages' },
+    payload => {
+      if(openTk && payload.new.ticket_id === openTk.id){
+        loadMsgs();
+        toast('پاسخ جدید از کارشناس آمیتیس دریافت شد.');
+      }
+    })
+  .on('postgres_changes',
+    { event:'UPDATE', schema:'public', table:'tickets' },
+    payload => { if(mine.some(m=>m.id===payload.new.id)) renderMine(); })
+  .subscribe();
+
+renderMine();
+</script>
+</body>
+</html>
