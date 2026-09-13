@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گروه مشاوران آمیتیس | مشاوره تخصصی صنعت سلامت</title>
+
+<!-- فونت‌ها: استعداد (تیترهای بلد) + وزیرمتن (متن) + Space Grotesk (لاتین) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v7.3.0/dist/font-face.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============ متغیرها و پایه ============ */
+:root{
+  --cream:#F7F1E4;
+  --cream-soft:#F0E7D3;
+  --navy:#182642;
+  --navy-deep:#101D33;
+  --orange:#E98840;
+  --orange-soft:#F6D9BA;
+  --orange-tint:#FAEBD6;
+  --line:rgba(24,38,66,.14);
+  --lat:'Space Grotesk',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Vazirmatn','Estedad',Tahoma,sans-serif;
+  background:var(--cream);
+  color:var(--navy);
+  line-height:1.9;
+  overflow-x:hidden;
+}
+::selection{background:var(--orange);color:#fff}
+img,svg{display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;background:none;border:0;cursor:pointer;color:inherit}
+section{scroll-margin-top:96px}
+.container{max-width:1200px;margin-inline:auto;padding-inline:clamp(20px,5vw,48px)}
+.lat{font-family:var(--lat)}
+
+/* انیمیشن ورود عناصر هنگام اسکرول */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+
+/* ============ ناوبری ============ */
+.nav{
+  position:fixed;inset-inline:0;top:0;z-index:50;
+  background:rgba(247,241,228,.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s;
+}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:42px;height:42px;flex-shrink:0}
+.brand-name{font-family:'Estedad';font-weight:800;font-size:1.15rem;line-height:1.2}
+.brand-name small{display:block;font-family:var(--lat);font-weight:700;font-size:.6rem;letter-spacing:.28em;color:var(--orange)}
+.nav-links{display:flex;gap:34px;list-style:none}
+.nav-links a{font-weight:600;font-size:.95rem;position:relative;padding-block:6px}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;inset-inline:0;height:2px;
+  background:var(--orange);transform:scaleX(0);transform-origin:right;
+  transition:transform .3s;
+}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.burger{display:none;flex-direction:column;gap:6px;padding:8px;z-index:60}
+.burger span{width:26px;height:2.5px;background:var(--navy);border-radius:2px;transition:.35s}
+.burger.open span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
+.burger.open span:nth-child(2){transform:rotate(-45deg)}
+
+/* منوی موبایل */
+.m-menu{
+  position:fixed;inset:0;z-index:55;background:var(--navy-deep);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:.4s;
+}
+.m-menu.open{opacity:1;visibility:visible}
+.m-menu ul{list-style:none;text-align:center;display:grid;gap:14px}
+.m-menu a{
+  font-family:'Estedad';font-weight:800;font-size:clamp(1.8rem,7vw,2.6rem);color:var(--cream);
+  transition:color .25s;
+}
+.m-menu a:hover{color:var(--orange)}
+.m-menu li{transform:translateY(20px);opacity:0;transition:.5s}
+.m-menu.open li{transform:none;opacity:1}
+.m-menu.open li:nth-child(2){transition-delay:.08s}
+.m-menu.open li:nth-child(3){transition-delay:.16s}
+.m-menu.open li:nth-child(4){transition-delay:.24s}
+
+/* ============ هیرو ============ */
+.hero{padding-top:clamp(130px,17vh,180px);position:relative}
+/* خطوط شبکه‌ی ظریف پس‌زمینه */
+.hero::before,.hero::after{
+  content:'';position:absolute;top:0;bottom:0;width:1px;background:var(--line);pointer-events:none;
+}
+.hero::before{right:24%}
+.hero::after{right:66%}
+
+.badge{
+  display:inline-flex;align-items:center;gap:10px;
+  font-weight:700;font-size:.85rem;
+  border:1px solid var(--line);border-radius:999px;
+  padding:8px 18px;margin-bottom:30px;background:#fff8;
+}
+.badge i{width:9px;height:9px;border-radius:50%;background:var(--orange);animation:pulse 1.8s infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(233,136,64,.45)}
+  60%{box-shadow:0 0 0 9px rgba(233,136,64,0)}
+}
+.hero h1{
+  font-family:'Estedad';font-weight:900;
+  font-size:clamp(2.5rem,7.2vw,5.4rem);
+  line-height:1.32;letter-spacing:-.5px;
+  max-width:19ch;
+}
+.hl{
+  background:linear-gradient(transparent 58%,var(--orange-soft) 58%);
+  border-radius:4px;padding-inline:4px;
+}
+.ecg-wrap{margin-block:clamp(28px,4vw,44px)}
+.ecg{width:100%;height:clamp(64px,9vw,110px)}
+.ecg-base{stroke:rgba(24,38,66,.16);stroke-width:1.6}
+.ecg-line{
+  stroke:var(--orange);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1350;animation:draw 4.2s ease-in-out infinite;
+}
+@keyframes draw{0%{stroke-dashoffset:1350}58%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+
+.hero-row{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:40px;
+  padding-bottom:clamp(50px,7vw,80px);
+}
+.hero-row p{max-width:52ch;font-size:1.06rem;color:#3a4763}
+.actions{display:flex;gap:14px;flex-shrink:0}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-weight:700;font-size:.98rem;
+  padding:15px 30px;border-radius:999px;
+  transition:.3s;border:1.5px solid var(--navy);
+}
+.btn svg{width:18px;height:18px;transition:transform .3s}
+.btn:hover svg{transform:translateX(-5px)}
+.btn-solid{background:var(--navy);color:var(--cream)}
+.btn-solid:hover{background:var(--navy-deep)}
+.btn-ghost:hover{background:var(--navy);color:var(--cream)}
+
+.hero-meta{
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(3,1fr);
+}
+.hero-meta div{padding:26px 4px;border-inline-start:1px solid var(--line);padding-inline-start:26px}
+.hero-meta div:first-child{border-inline-start:0;padding-inline-start:4px}
+.hero-meta b{font-family:'Estedad';font-weight:800;font-size:1.05rem;display:block}
+.hero-meta span{font-size:.88rem;color:#5a6580}
+
+/* ============ نوار متحرک ============ */
+.marquee{
+  background:var(--navy-deep);color:var(--cream);
+  overflow:hidden;white-space:nowrap;direction:ltr;
+  padding-block:18px;
+}
+.mq-track{display:inline-flex;align-items:center;gap:36px;animation:mq 30s linear infinite;will-change:transform}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mq-item{font-family:'Estedad';font-weight:700;font-size:1.05rem;display:inline-flex;align-items:center;gap:36px}
+.mq-item::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0}
+
+/* ============ سرصفحه‌ی بخش‌ها ============ */
+.sec{padding-block:clamp(70px,10vw,120px)}
+.kicker{
+  display:flex;align-items:center;gap:14px;
+  font-weight:700;font-size:.9rem;color:#5a6580;margin-bottom:18px;
+}
+.kicker::before{content:'';width:36px;height:2.5px;background:var(--orange);border-radius:2px}
+.kicker b{color:var(--orange);font-family:var(--lat);font-size:.95rem}
+h2{font-family:'Estedad';font-weight:900;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.4}
+
+/* ============ درباره ============ */
+.about-grid{display:grid;grid-template-columns:1fr 340px;gap:clamp(40px,6vw,90px);margin-top:40px}
+.about-lead{
+  font-family:'Estedad';font-weight:600;
+  font-size:clamp(1.15rem,2.1vw,1.5rem);line-height:2.05;
+}
+.about-lead .hl{font-weight:900}
+.glance{border-top:2px solid var(--navy)}
+.glance dl{border-bottom:1px solid var(--line);padding-block:20px}
+.glance dt{font-family:'Estedad';font-weight:800;font-size:.95rem;margin-bottom:4px}
+.glance dt i{font-style:normal;color:var(--orange);font-family:var(--lat);margin-inline-end:8px}
+.glance dd{font-size:.92rem;color:#5a6580}
+
+/* ============ خدمات (آکاردئون) ============ */
+.srv-grid{display:grid;grid-template-columns:360px 1fr;gap:clamp(40px,6vw,90px);align-items:start}
+.srv-side{position:sticky;top:110px}
+.srv-side p{color:#5a6580;margin-top:18px;max-width:34ch}
+.srv-count{
+  margin-top:30px;display:inline-flex;align-items:baseline;gap:10px;
+  border-top:2px solid var(--navy);padding-top:16px;
+}
+.srv-count b{font-family:var(--lat);font-size:2.4rem;color:var(--orange);line-height:1}
+.srv-count span{font-size:.88rem;font-weight:600;color:#5a6580}
+
+.srv{border-bottom:1px solid var(--line)}
+.srv:first-child{border-top:2px solid var(--navy)}
+.srv-head{
+  width:100%;display:flex;align-items:center;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(20px,3vw,28px) 10px;text-align:right;
+  transition:background .3s,padding .3s;
+}
+.srv-head:hover{background:var(--orange-tint)}
+.srv-num{
+  font-family:var(--lat);font-weight:700;font-size:1rem;color:#98a0b3;
+  min-width:38px;transition:color .3s;
+}
+.srv-title{
+  font-family:'Estedad';font-weight:800;
+  font-size:clamp(1.05rem,2vw,1.4rem);flex:1;transition:color .3s;
+}
+.srv-icon{
+  width:38px;height:38px;border:1.5px solid var(--line);border-radius:50%;
+  display:grid;place-items:center;flex-shrink:0;transition:.35s;
+}
+.srv-icon svg{width:16px;height:16px;stroke:var(--navy);transition:.35s}
+.srv.open .srv-icon{background:var(--orange);border-color:var(--orange)}
+.srv.open .srv-icon svg{stroke:#fff;transform:rotate(135deg)}
+.srv.open .srv-num,.srv-head:hover .srv-num{color:var(--orange)}
+.srv-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.3,.8,.3,1)}
+.srv.open .srv-body{grid-template-rows:1fr}
+.srv-body>div{overflow:hidden}
+.srv-body p{
+  padding:0 10px 28px calc(38px + clamp(14px,2.5vw,28px) + 48px);
+  color:#43506b;max-width:62ch;
+}
+
+/* ============ چرا آمیتیس (بخش تیره) ============ */
+.why{background:var(--navy-deep);color:var(--cream);position:relative;overflow:hidden}
+.why .kicker{color:#8f9ab3}
+.why-title{
+  font-family:'Estedad';font-weight:900;
+  font-size:clamp(2.1rem,5.5vw,4.2rem);line-height:1.45;
+  text-align:center;max-width:22ch;margin-inline:auto;
+}
+.why-title .dash{color:var(--orange);font-weight:400}
+.why-title em{font-style:normal;color:var(--orange)}
+.why-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  margin-top:clamp(45px,6vw,70px);
+  border-top:1px solid rgba(247,241,228,.18);
+}
+.why-item{padding:clamp(30px,4vw,50px) clamp(10px,3vw,40px)}
+.why-item:first-child{border-inline-end:1px solid rgba(247,241,228,.18)}
+.why-item svg{width:40px;height:40px;stroke:var(--orange);margin-bottom:20px}
+.why-item h3{font-family:'Estedad';font-weight:800;font-size:1.3rem;margin-bottom:12px}
+.why-item p{color:#aab3c7;max-width:44ch}
+/* موتیف ضربان کم‌رنگ در پس‌زمینه بخش تیره */
+.why-ecg{position:absolute;bottom:-8px;inset-inline:0;width:100%;height:90px;opacity:.1;pointer-events:none}
+.why-ecg path{stroke:var(--orange);stroke-width:2;fill:none}
+
+/* ============ تماس ============ */
+.contact-panel{
+  background:var(--navy);color:var(--cream);
+  border-radius:clamp(22px,4vw,36px);
+  padding:clamp(40px,6vw,80px);
+  display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(36px,5vw,80px);
+  align-items:center;position:relative;overflow:hidden;
+}
+.contact-panel::after{
+  content:'';position:absolute;top:-70px;left:-70px;
+  width:230px;height:230px;border:2px solid rgba(233,136,64,.25);border-radius:50%;
+  pointer-events:none;
+}
+.contact-panel h2{color:#fff}
+.contact-panel .lead{color:#aab3c7;margin-top:16px;max-width:44ch}
+.soc{list-style:none;border-top:1px solid rgba(247,241,228,.18)}
+.soc li{border-bottom:1px solid rgba(247,241,228,.18)}
+.soc a{
+  display:flex;align-items:center;gap:18px;
+  padding:26px 8px;transition:.3s;
+}
+.soc a:hover{padding-inline-start:20px;color:var(--orange)}
+.soc .ic{
+  width:52px;height:52px;border:1.5px solid rgba(247,241,228,.25);border-radius:50%;
+  display:grid;place-items:center;flex-shrink:0;transition:.3s;
+}
+.soc a:hover .ic{border-color:var(--orange);background:var(--orange)}
+.soc a:hover .ic svg{stroke:#fff}
+.soc .ic svg{width:22px;height:22px;stroke:var(--cream);transition:.3s}
+.soc b{font-family:'Estedad';font-weight:800;font-size:1.15rem;display:block}
+.soc span{font-family:var(--lat);font-size:.85rem;color:#8f9ab3;direction:ltr}
+.soc .arrow{margin-inline-start:auto;width:20px;height:20px;stroke:currentColor;opacity:.5}
+
+/* ============ فوتر ============ */
+footer{border-top:1px solid var(--line);padding-block:34px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot .brand-name{font-size:1rem}
+.foot p{font-size:.85rem;color:#5a6580}
+
+/* ============ ریسپانسیو ============ */
+@media(max-width:960px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .about-grid,.srv-grid,.contact-panel{grid-template-columns:1fr}
+  .srv-side{position:static}
+  .why-grid{grid-template-columns:1fr}
+  .why-item:first-child{border-inline-end:0;border-bottom:1px solid rgba(247,241,228,.18)}
+  .hero-meta{grid-template-columns:1fr}
+  .hero-meta div{border-inline-start:0;border-top:1px solid var(--line);padding-inline-start:4px}
+  .hero-meta div:first-child{border-top:0}
+  .hero::before,.hero::after{display:none}
+}
+@media(max-width:640px){
+  .hero-row{flex-direction:column;align-items:flex-start}
+  .srv-body p{padding:0 10px 26px 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ناوبری ===== -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label="گروه مشاوران آمیتیس">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="11" fill="#182642"/>
+        <path d="M7 25h6l3-10 4.5 13 3-7.5H33" stroke="#E98840" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-name">آمیتیس<small>AMITIS GROUP</small></span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#about">درباره ما</a></li>
+        <li><a href="#services">خدمات</a></li>
+        <li><a href="#why">چرا آمیتیس</a></li>
+        <li><a href="#contact">ارتباط با ما</a></li>
+      </ul>
+    </nav>
+    <button class="burger" id="burger" aria-label="منو"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- منوی موبایل -->
+<div class="m-menu" id="mMenu">
+  <ul>
+    <li><a href="#about">درباره ما</a></li>
+    <li><a href="#services">خدمات</a></li>
+    <li><a href="#why">چرا آمیتیس</a></li>
+    <li><a href="#contact">ارتباط با ما</a></li>
+  </ul>
+</div>
+
+<main id="top">
+
+  <!-- ===== هیرو ===== -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge reveal"><i></i> گروه مشاوران آمیتیس · مشاوره تخصصی صنعت سلامت</div>
+      <h1 class="reveal d1">از ایده تا بهره‌برداری، همراهِ <span class="hl">مراکز درمانی</span> شما</h1>
+
+      <!-- خط ضربان: امضای بصری صفحه -->
+      <div class="ecg-wrap reveal d2">
+        <svg class="ecg" viewBox="0 0 1200 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
+          <path id="ecgPath" d="M0 60 H360 L382 52 L404 60 H430 L444 84 L458 10 L472 100 L486 60 H540 L566 44 L592 60 H1200"/>
+          <path class="ecg-base" d="M0 60 H360 L382 52 L404 60 H430 L444 84 L458 10 L472 100 L486 60 H540 L566 44 L592 60 H1200"/>
+          <path class="ecg-line" d="M0 60 H360 L382 52 L404 60 H430 L444 84 L458 10 L472 100 L486 60 H540 L566 44 L592 60 H1200"/>
+          <circle r="5.5" fill="#E98840">
+            <animateMotion dur="4.2s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.58;1" calcMode="linear">
+              <mpath href="#ecgPath"/>
+            </animateMotion>
+          </circle>
+        </svg>
+      </div>
+
+      <div class="hero-row reveal d3">
+        <p>گروه مشاوران آمیتیس، متشکل از کارشناسان و بازنشستگان مجرب برجسته‌ی حوزه‌ی بیمارستانی با سوابق مدیریتی و نظارتی در سطوح عالی؛ آماده‌ی ارائه‌ی خدمات تخصصی در صنعت سلامت است.</p>
+        <div class="actions">
+          <a class="btn btn-solid" href="#services">مشاهده خدمات
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#contact">ارتباط با ما</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container hero-meta reveal">
+      <div><b>حوزه فعالیت</b><span>صنعت سلامت و مراکز درمانی</span></div>
+      <div><b>تیم مشاوران</b><span>کارشناسان و بازنشستگان برجسته</span></div>
+      <div><b>گستره خدمات</b><span>از امکان‌سنجی تا بهره‌برداری و IMS</span></div>
+    </div>
+  </section>
+
+  <!-- ===== نوار متحرک ===== -->
+  <div class="marquee" aria-hidden="true">
+    <div class="mq-track" id="mqTrack">
+      <span class="mq-item">امکان‌سنجی و طرح توجیهی</span>
+      <span class="mq-item">طراحی و مستندات فنی</span>
+      <span class="mq-item">مدیریت پروژه‌های درمانی</span>
+      <span class="mq-item">استانداردهای وزارت بهداشت</span>
+      <span class="mq-item">سیستم مدیریت یکپارچه IMS</span>
+      <span class="mq-item">کیفیت، ایمنی و محیط زیست</span>
+      <span class="mq-item">امور مالیاتی و بیمه</span>
+    </div>
+  </div>
+
+  <!-- ===== درباره ===== -->
+  <section class="sec" id="about">
+    <div class="container">
+      <div class="kicker reveal"><b>۰۱</b> درباره‌ی آمیتیس</div>
+      <h2 class="reveal d1">تجربه‌ی نظارت،<br>در خدمت سلامت</h2>
+      <div class="about-grid">
+        <p class="about-lead reveal d2">
+          این مجموعه با بهره‌گیری از <span class="hl">دانش فنی روز</span> و تجارب علمی و عملی کارآمد،
+          توسط تیمی با <span class="hl">سوابق مدیریتی و نظارتی در سطوح عالی</span> تشکیل شده و آماده‌ی
+          همراهی شما در تمام مسیر تأسیس، راه‌اندازی و بهره‌برداری از مراکز بهداشتی، درمانی و تشخیصی است.
+        </p>
+        <aside class="glance reveal d3">
+          <dl><dt><i>a.</i>تخصص</dt><dd>حوزه‌ی بیمارستانی و صنعت سلامت</dd></dl>
+          <dl><dt><i>b.</i>تمایز</dt><dd>ترکیب دانش روز با تجربه‌ی مدیریتی و نظارتی</dd></dl>
+          <dl><dt><i>c.</i>رویکرد</dt><dd>همراهی کامل، از ایده تا بهره‌برداری</dd></dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== خدمات ===== -->
+  <section class="sec" id="services" style="padding-top:0">
+    <div class="container srv-grid">
+      <div class="srv-side reveal">
+        <div class="kicker"><b>۰۲</b> خدمات تخصصی</div>
+        <h2>هشت حوزه،<br>یک مسیر کامل</h2>
+        <p>هر مرحله از پروژه‌ی شما — از مطالعات اولیه تا گواهینامه‌های استاندارد — توسط کارشناسان همان حوزه پوشش داده می‌شود.</p>
+        <div class="srv-count"><b>08</b><span>حوزه‌ی تخصصی خدماتی</span></div>
+      </div>
+
+      <div class="reveal d1">
+
+        <div class="srv open">
+          <button class="srv-head" aria-expanded="true">
+            <span class="srv-num">01</span>
+            <span class="srv-title">مطالعات امکان‌سنجی و طرح توجیهی</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>بررسی مناطق مورد نظر جهت تأسیس مراکز درمانی از نظر بهره‌وری و در صورت لزوم تهیه‌ی طرح توجیهی و ارائه‌ی پیشنهادات هوشمندانه با توجه به شرایط موجود.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">02</span>
+            <span class="srv-title">تأسیس، راه‌اندازی و بهره‌برداری</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>برنامه‌ریزی امور مرتبط با تأسیس، راه‌اندازی و بهره‌برداری از کلیه‌ی مراکز بهداشتی، درمانی و تشخیصی در کشور، مطابق با الزامات قانونی و استانداردهای وزارت بهداشت.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">03</span>
+            <span class="srv-title">طراحی نقشه‌ها و مستندات فنی</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>طراحی نقشه‌ها و ارائه‌ی مستندات فنی منطبق بر استانداردهای معتبر وزارت بهداشت و سازمان‌های مرجع.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">04</span>
+            <span class="srv-title">مدیریت و اجرای پروژه‌های ساختمانی</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>مدیریت و اجرای پروژه‌های ساختمانی مراکز درمانی با حضور مستمر مهندسین ناظر متخصص در حوزه‌ی بیمارستانی.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">05</span>
+            <span class="srv-title">تجهیزات و تأمین‌کنندگان معتبر</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>معرفی شرکت‌های معتبر و متخصص در تأمین خدمات و تجهیزات مرتبط با مراکز تشخیصی و درمانی.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">06</span>
+            <span class="srv-title">کیفیت، ایمنی و سیستم یکپارچه IMS</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>ارائه‌ی خدمات مشاوره، آموزش و استقرار سیستم‌های مدیریت کیفیت، ایمنی و بهداشت حرفه‌ای، محیط زیست و سیستم مدیریت یکپارچه (IMS)؛ همراه با پشتیبانی در اخذ، تمدید و نگهداری گواهینامه‌های استانداردهای مدیریتی مراکز تشخیصی و درمانی.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">07</span>
+            <span class="srv-title">امور مالیاتی</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>انجام امور مالیاتی شامل ثبت و ارسال اظهارنامه‌ی مالیاتی مراکز تشخیصی و درمانی.</p></div></div>
+        </div>
+
+        <div class="srv">
+          <button class="srv-head" aria-expanded="false">
+            <span class="srv-num">08</span>
+            <span class="srv-title">منابع انسانی و بیمه کارکنان</span>
+            <span class="srv-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="srv-body"><div><p>انجام امور مربوط به منابع انسانی شامل تهیه و ارسال لیست بیمه‌ی کارکنان.</p></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== چرا آمیتیس ===== -->
+  <section class="sec why" id="why">
+    <div class="container">
+      <div class="kicker reveal" style="justify-content:center"><b>۰۳</b> چرا آمیتیس</div>
+      <h2 class="why-title reveal d1">
+        <span class="dash">——</span> اعتبارِ ما،<br>گویای همه‌چیز است <span class="dash">——</span>
+      </h2>
+      <div class="why-grid">
+        <div class="why-item reveal d1">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <h3>تجربه‌ی چندین‌ساله، هزینه‌ی منطقی</h3>
+          <p>بهره‌مندی شما از تجارب چندین‌ساله‌ی کارشناسان و بازنشستگان حوزه‌ی نظارتی و مدیریت بیمارستانی، با هزینه‌ای پایین.</p>
+        </div>
+        <div class="why-item reveal d2">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+          <h3>مشاوره‌ی به‌موقع، جلوگیری از اتلاف هزینه</h3>
+          <p>با مشاوره پیش از شروع انجام کار، از اتلاف هزینه‌های اضافی خودداری کنید و خدماتی استثنایی ارائه دهید.</p>
+        </div>
+      </div>
+    </div>
+    <!-- موتیف ضربان در پس‌زمینه -->
+    <svg class="why-ecg" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 50 H340 L365 42 L390 50 H420 L435 72 L450 8 L465 82 L480 50 H540 L565 34 L590 50 H1200"/>
+    </svg>
+  </section>
+
+  <!-- ===== تماس ===== -->
+  <section class="sec" id="contact">
+    <div class="container">
+      <div class="kicker reveal"><b>۰۴</b> ارتباط با ما</div>
+      <div class="contact-panel reveal d1">
+        <div>
+          <h2>گفت‌وگو را<br>شروع کنیم.</h2>
+          <p class="lead">یک مشاوره‌ی به‌موقع، پیش از شروع کار، مسیر پروژه‌ی شما را هموار می‌کند. از طریق شبکه‌های اجتماعی در دسترس ما باشید.</p>
+        </div>
+        <ul class="soc">
+          <li>
+            <a href="https://www.instagram.com/amitis_company_/" target="_blank" rel="noopener">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+              <span><b>اینستاگرام</b><span class="lat">@amitis_company_</span></span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://t.me/amitis_campany" target="_blank" rel="noopener">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
+              <span><b>تلگرام</b><span class="lat">@amitis_campany</span></span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== فوتر ===== -->
+<footer>
+  <div class="container foot">
+    <span class="brand-name">آمیتیس<small>AMITIS GROUP</small></span>
+    <p>© گروه مشاوران آمیتیس — مشاوره تخصصی صنعت سلامت · تمامی حقوق محفوظ است.</p>
+  </div>
+</footer>
+
+<script>
+// ناوبری: سایه‌ی خط زیرین هنگام اسکرول
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 10), {passive:true});
+
+// منوی موبایل
+const burger = document.getElementById('burger');
+const mMenu  = document.getElementById('mMenu');
+burger.addEventListener('click', () => {
+  const open = mMenu.classList.toggle('open');
+  burger.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+mMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mMenu.classList.remove('open'); burger.classList.remove('open');
+  document.body.style.overflow = '';
+}));
+
+// نوار متحرک: تکثیر محتوا برای حلقه‌ی بی‌نهایت
+const mq = document.getElementById('mqTrack');
+mq.innerHTML += mq.innerHTML;
+
+// آکاردئون خدمات (تک‌بازشو)
+document.querySelectorAll('.srv-head').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.srv.open').forEach(s => {
+      s.classList.remove('open');
+      s.querySelector('.srv-head').setAttribute('aria-expanded','false');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
+
+// ورود عناصر هنگام اسکرول + هایلایت لینک فعال ناوبری
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      if (e.target.tagName === 'SECTION') {
+        document.querySelectorAll('.nav-links a').forEach(a =>
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+      }
+    }
+  });
+}, {threshold:.15});
+document.querySelectorAll('.reveal, section').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
