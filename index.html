@@ -334,7 +334,7 @@ footer{border-top:1px solid var(--line);padding-block:34px}
         <li><a href="#about">درباره ما</a></li>
         <li><a href="#services">خدمات</a></li>
         <li><a href="#why">چرا آمیتیس</a></li>
-          <li><a href="tickets.html">پشتیبانی و تیکت</a>
+        <li><a href="tickets.html">پشتیبانی و تیکت</a></li>
         <li><a href="#contact">ارتباط با ما</a></li>
       </ul>
     </nav>
@@ -357,13 +357,15 @@ footer{border-top:1px solid var(--line);padding-block:34px}
   <!-- ===== هیرو ===== -->
   <section class="hero">
     <div class="container">
-      <h1">
-  <i></i>
-  <span id="heroBadge"id="heroLead">
-    گروه مشاوران آمیتیس · مشاوره تخصصی صنعت سلامت
-  </span>
-</div>
-      <h1 class="reveal d1"id="heroTitle">از ایده تا بهره‌برداری، همراهِ <span class="hl">مراکز درمانی</span> شما</h1>
+      
+      <!-- نشان بالای تیتر -->
+      <div class="badge reveal">
+        <i></i>
+        <span id="heroBadge">گروه مشاوران آمیتیس · مشاوره تخصصی صنعت سلامت</span>
+      </div>
+
+      <!-- تیتر اصلی -->
+      <h1 class="reveal d1" id="heroTitle"> از ایده تا بهره‌برداری، همراهِ <span class="hl">مراکز درمانی</span> شما</h1>
 
       <!-- خط ضربان: امضای بصری صفحه -->
       <div class="ecg-wrap reveal d2">
@@ -380,7 +382,8 @@ footer{border-top:1px solid var(--line);padding-block:34px}
       </div>
 
       <div class="hero-row reveal d3">
-        <p>گروه مشاوران آمیتیس، متشکل از کارشناسان و بازنشستگان مجرب برجسته‌ی حوزه‌ی بیمارستانی با سوابق مدیریتی و نظارتی در سطوح عالی؛ آماده‌ی ارائه‌ی خدمات تخصصی در صنعت سلامت است.</p>
+        <!-- پاراگراف معرفی -->
+        <p id="heroLead">گروه مشاوران آمیتیس، متشکل از کارشناسان و بازنشستگان مجرب برجسته‌ی حوزه‌ی بیمارستانی با سوابق مدیریتی و نظارتی در سطوح عالی؛ آماده‌ی ارائه‌ی خدمات تخصصی در صنعت سلامت است.</p>
         <div class="actions">
           <a class="btn btn-solid" href="#services">مشاهده خدمات
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>
@@ -566,7 +569,7 @@ footer{border-top:1px solid var(--line);padding-block:34px}
 
         <!-- تلفن ۱ -->
         <li>
-          <a href="tel:+989121441326">
+          <a href="tel:+989121441326" id="ph1Link">
             <span class="ic">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"
                    stroke-linecap="round" stroke-linejoin="round">
@@ -576,7 +579,7 @@ footer{border-top:1px solid var(--line);padding-block:34px}
 
             <span>
               <b>تلفن تماس ۱</b>
-              <span class="lat">+98 912 144 1326</span>
+              <span class="lat" id="ph1Text">+98 912 144 1326</span>
             </span>
 
             <svg class="arrow" viewBox="0 0 24 24" fill="none"
@@ -590,7 +593,7 @@ footer{border-top:1px solid var(--line);padding-block:34px}
 
         <!-- تلفن ۲ -->
         <li>
-          <a href="tel:+989125140982">
+          <a href="tel:+989125140982" id="ph2Link">
             <span class="ic">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"
                    stroke-linecap="round" stroke-linejoin="round">
@@ -600,7 +603,7 @@ footer{border-top:1px solid var(--line);padding-block:34px}
 
             <span>
               <b>تلفن تماس ۲</b>
-              <span class="lat">+98 912 514 0982</span>
+              <span class="lat" id="ph2Text">+98 912 514 0982</span>
             </span>
 
             <svg class="arrow" viewBox="0 0 24 24" fill="none"
@@ -616,7 +619,8 @@ footer{border-top:1px solid var(--line);padding-block:34px}
         <li>
           <a href="https://www.instagram.com/amitis_company_/"
              target="_blank"
-             rel="noopener noreferrer">
+             rel="noopener noreferrer"
+             id="instaLink">
 
             <span class="ic">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
@@ -645,7 +649,8 @@ footer{border-top:1px solid var(--line);padding-block:34px}
         <li>
           <a href="https://t.me/amitis_campany"
              target="_blank"
-             rel="noopener noreferrer">
+             rel="noopener noreferrer"
+             id="tgLink">
 
             <span class="ic">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"
@@ -681,10 +686,11 @@ footer{border-top:1px solid var(--line);padding-block:34px}
 <footer>
   <div class="container foot">
     <span class="brand-name">آمیتیس<small>AMITIS GROUP</small></span>
-    <p>© گروه مشاوران آمیتیس — مشاوره تخصصی صنعت سلامت · تمامی حقوق محفوظ است.</p>
+    <p id="footText">© گروه مشاوران آمیتیس — مشاوره تخصصی صنعت سلامت · تمامی حقوق محفوظ است.</p>
   </div>
 </footer>
 
+<!-- اسکریپت تعاملی صفحه -->
 <script>
 // ناوبری: سایه‌ی خط زیرین هنگام اسکرول
 const nav = document.getElementById('nav');
@@ -736,6 +742,86 @@ const io = new IntersectionObserver(entries => {
   });
 }, {threshold:.15});
 document.querySelectorAll('.reveal, section').forEach(el => io.observe(el));
+</script>
+
+<!-- ۳-۲. اسکریپت اعمال ظاهر از Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* اعمال ظاهر و متن‌های قابل مدیریت از پنل ادمین */
+(async () => {
+  try {
+    const db = supabase.createClient(
+      'https://zvtfkpdzewmrkziyustg.supabase.co',
+      'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT'
+    );
+    const { data } = await db.from('settings').select('key,value');
+    const s = Object.fromEntries((data || []).map(r => [r.key, r.value]));
+
+    const esc = v => String(v || '').replaceAll('&', '&amp;')
+                                   .replaceAll('<', '&lt;')
+                                   .replaceAll('>', '&gt;')
+                                   .replaceAll('"', '&quot;')
+                                   .replaceAll("'", '&#039;');
+
+    /* ۱) رنگ‌ها → CSS Variables */
+    const r = document.documentElement.style;
+    if (s.color_orange) r.setProperty('--orange', s.color_orange);
+    if (s.color_navy) {
+      r.setProperty('--navy', s.color_navy);
+      r.setProperty('--navy-deep', s.color_navy);
+    }
+    if (s.color_bg) r.setProperty('--cream', s.color_bg);
+
+    /* ۲) متن‌ها */
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined && val !== null) el.textContent = val;
+    };
+    set('heroBadge', s.badge_text);
+    set('heroLead', s.hero_lead);
+    set('footText', s.footer_text);
+
+    /* تیتر: ساخت هایلایت به‌صورت امن */
+    const heroTitleEl = document.getElementById('heroTitle');
+    if (heroTitleEl && s.hero_title) {
+      const t = esc(s.hero_title);
+      const hl = s.hero_hl ? esc(s.hero_hl) : '';
+      heroTitleEl.innerHTML = (hl && t.includes(hl)) 
+        ? t.replace(hl, `<span class="hl">${hl}</span>`) 
+        : t;
+    }
+
+    /* ۳) راه‌های ارتباطی */
+    if (s.phone1) {
+      const a = document.getElementById('ph1Link');
+      if (a) a.href = 'tel:' + s.phone1.replace(/\s/g, '');
+      set('ph1Text', s.phone1);
+    }
+    if (s.phone2) {
+      const a = document.getElementById('ph2Link');
+      if (a) a.href = 'tel:' + s.phone2.replace(/\s/g, '');
+      set('ph2Text', s.phone2);
+    }
+    
+    const safe = u => {
+      try {
+        const x = new URL(u);
+        return ['http:', 'https:'].includes(x.protocol) ? x.href : null;
+      } catch (e) {
+        return null;
+      }
+    };
+    
+    const instaEl = document.getElementById('instaLink');
+    if (instaEl && s.insta && safe(s.insta)) instaEl.href = safe(s.insta);
+
+    const tgEl = document.getElementById('tgLink');
+    if (tgEl && s.tg && safe(s.tg)) tgEl.href = safe(s.tg);
+
+  } catch (e) {
+    console.warn('ظاهر سایت از پیش‌فرض بارگذاری شد.', e);
+  }
+})();
 </script>
 </body>
 </html>
