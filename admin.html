@@ -137,6 +137,7 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
 .chip.green{background:rgba(62,155,108,.13);color:var(--green)}
 .chip.gray{background:rgba(24,38,66,.08);color:var(--text-2)}
 .chip.orange{background:var(--orange-tint);color:var(--orange)}
+.chip.blue{background:rgba(24,38,66,.12);color:var(--navy)}
 .row-acts{display:flex;gap:6px;justify-content:flex-end}
 .act{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;transition:.2s;border:1.5px solid var(--line)}
 .act svg{width:15px;height:15px}
@@ -173,14 +174,7 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
 #toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
 #toast svg{width:18px;height:18px;stroke:var(--orange)}
 
-@media(max-width:1024px){.grid-2,.set-grid{grid-template-columns:1fr}}
-@media(max-width:860px){
-  .sidebar{transform:translateX(100%)}
-  .sidebar.open{transform:none;box-shadow:20px 0 60px rgba(16,29,51,.35)}
-  .main{margin-inline-start:0}
-  .burger{display:block}
-}
-  /* ================= ظاهر سایت ================= */
+/* ================= ظاهر سایت ================= */
 .apr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .color-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
 .color-row:last-child{border-bottom:0}
@@ -204,13 +198,14 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
 .apr-preview .pv-title{font-family:'Estedad';font-weight:900;font-size:1.15rem;line-height:1.6}
 .apr-preview .pv-btn{display:inline-block;background:var(--pv-navy);color:var(--pv-cream);font-weight:700;font-size:.78rem;padding:7px 20px;border-radius:999px;margin-top:12px}
 .apr-preview .pv-acc{color:var(--pv-orange);font-weight:800}
-@media(max-width:1024px){.apr-grid{grid-template-columns:1fr}}
+
 .scrim{position:fixed;inset:0;background:rgba(16,29,51,.4);z-index:35;opacity:0;visibility:hidden;transition:.3s}
-  /* ================= تیکت‌ها ================= */
+.scrim.show{opacity:1;visibility:visible}
+
+/* ================= تیکت‌ها ================= */
 .chat-overlay{position:fixed;inset:0;background:rgba(16,29,51,.55);backdrop-filter:blur(4px);z-index:65;display:none;justify-content:center;align-items:center;padding:20px}
 .chat-overlay.open{display:flex}
 .chat-box{width:min(760px,100%);height:min(660px,94vh);background:var(--cream);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;animation:pop .35s cubic-bezier(.2,.8,.3,1)}
-@keyframes pop{from{opacity:0;transform:translateY(22px)}}
 .chat-head{display:flex;align-items:center;gap:12px;padding:16px 22px;background:var(--card);border-bottom:1px solid var(--line)}
 .chat-head b{font-family:'Estedad';font-weight:800;font-size:.98rem;display:block}
 .chat-head .meta{font-size:.72rem;color:var(--text-2)}
@@ -225,7 +220,14 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
 .chat-input{display:flex;gap:9px;padding:14px 18px;background:var(--card);border-top:1px solid var(--line)}
 .chat-input textarea{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:9px 13px;outline:0;resize:none;font-size:.88rem;height:46px}
 .chat-input textarea:focus{border-color:var(--orange)}
-.scrim.show{opacity:1;visibility:visible}
+
+@media(max-width:1024px){.grid-2,.set-grid,.apr-grid{grid-template-columns:1fr}}
+@media(max-width:860px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:none;box-shadow:20px 0 60px rgba(16,29,51,.35)}
+  .main{margin-inline-start:0}
+  .burger{display:block}
+}
 </style>
 </head>
 <body>
@@ -268,9 +270,9 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
         داشبورد
       </button>
       <button class="sb-item" data-page="tickets">
-  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 9h8M8 13h5"/></svg>
-  تیکت‌ها <span class="cnt" id="tkBadge" style="display:none">۰</span>
-</button>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 9h8M8 13h5"/></svg>
+        تیکت‌ها <span class="cnt" id="tkBadge" style="display:none">۰</span>
+      </button>
       <button class="sb-item" data-page="msgs">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-8 8H4l2-3a8 8 0 1115-5z"/></svg>
         پیام‌ها <span class="cnt" id="unreadBadge" style="display:none">۰</span>
@@ -279,17 +281,14 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
         خدمات
       </button>
+      <button class="sb-item" data-page="appearance">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="10" r="2.5"/><circle cx="17.5" cy="13" r="2.5"/><path d="M12 2a10 10 0 100 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.9-.5-1.4 0-1.1.9-2 2-2h2.4a6 6 0 004.6-5.9C21.7 5.4 17.3 2 12 2z"/>
+        </svg>
+        ظاهر سایت
+      </button>
       <button class="sb-item" data-page="settings">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06A1.7 1.7 0 0015 19.4a1.7 1.7 0 00-1 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 009 19.4a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.51 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.56 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1z"/></svg>
-        <button class="sb-item" data-page="appearance">
-  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="13.5" cy="6.5" r="2.5"/>
-    <circle cx="6.5" cy="10" r="2.5"/>
-    <circle cx="17.5" cy="13" r="2.5"/>
-    <path d="M12 2a10 10 0 100 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.9-.5-1.4 0-1.1.9-2 2-2h2.4a6 6 0 004.6-5.9C21.7 5.4 17.3 2 12 2z"/>
-  </svg>
-  ظاهر سایت
-</button>
         تنظیمات
       </button>
     </nav>
@@ -378,29 +377,112 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
       </div>
     </section>
 
-    <!-- ===== تنظیمات ===== -->
     <!-- ===== تیکت‌ها ===== -->
-<section class="page" id="page-tickets">
-  <div class="tbl-tools">
-    <div class="tabs" id="tkTabs">
-      <button class="tab active" data-f="all">همه</button>
-      <button class="tab" data-f="need-reply">نیاز به پاسخ شما</button>
-      <button class="tab" data-f="awaiting_customer">در انتظار مشتری</button>
-      <button class="tab" data-f="closed">بسته‌شده</button>
-    </div>
-    <label class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-      <input type="text" id="tkSearch" placeholder="جستجو در تیکت‌ها...">
-    </label>
+    <section class="page" id="page-tickets">
+      <div class="tbl-tools">
+        <div class="tabs" id="tkTabs">
+          <button class="tab active" data-f="all">همه</button>
+          <button class="tab" data-f="need-reply">نیاز به پاسخ شما</button>
+          <button class="tab" data-f="awaiting_customer">در انتظار مشتری</button>
+          <button class="tab" data-f="closed">بسته‌شده</button>
+        </div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="text" id="tkSearch" placeholder="جستجو در تیکت‌ها...">
+        </label>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:64px">کد</th><th>مشتری</th><th>موضوع</th><th>آخرین فعالیت</th><th>وضعیت</th><th></th></tr></thead>
+          <tbody id="tkRows"></tbody>
+        </table>
+        <div class="empty" id="tkEmpty" style="display:none">تیکتی یافت نشد.</div>
+      </div>
+    </section>
+
+    <!-- ===== ظاهر سایت ===== -->
+    <section class="page" id="page-appearance">
+      <div class="apr-grid">
+        <div class="set-card">
+          <div class="card-head"><h3>رنگ‌بندی سایت</h3></div>
+          <div class="card-body">
+            <div class="color-row">
+              <input type="color" id="cOrange">
+              <div><div class="cl-name">رنگ تأکیدی (نارنجی)</div><div class="cl-val" id="cOrangeVal"></div></div>
+            </div>
+            <div class="color-row">
+              <input type="color" id="cNavy">
+              <div><div class="cl-name">رنگ اصلی متن و بخش تیره (سرمه‌ای)</div><div class="cl-val" id="cNavyVal"></div></div>
+            </div>
+            <div class="color-row">
+              <input type="color" id="cBg">
+              <div><div class="cl-name">رنگ پس‌زمینه (کرم)</div><div class="cl-val" id="cBgVal"></div></div>
+            </div>
+            <div class="presets">
+              <button class="preset" onclick="applyPreset('#E98840','#182642','#F7F1E4')"><i style="background:linear-gradient(135deg,#E98840 50%,#182642 50%)"></i> پیش‌فرض آمیتیس</button>
+              <button class="preset" onclick="applyPreset('#D97A5A','#1F3A33','#F5EFE2')"><i style="background:linear-gradient(135deg,#D97A5A 50%,#1F3A33 50%)"></i> گلبهی / جنگلی</button>
+              <button class="preset" onclick="applyPreset('#C99A3C','#232B4A','#F7F3E8')"><i style="background:linear-gradient(135deg,#C99A3C 50%,#232B4A 50%)"></i> طلایی / سرمه‌ای</button>
+            </div>
+            <div class="apr-preview" id="aprPreview">
+              <div class="pv-title">نمونه‌ی زنده‌ی <span class="pv-acc">رنگ‌بندی</span> سایت</div>
+              <div style="font-size:.8rem;opacity:.7;margin-top:4px">تغییرات را همین‌جا ببینید و سپس ذخیره کنید.</div>
+              <span class="pv-btn">دکمه‌ی نمونه</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="set-card">
+          <div class="card-head"><h3>متن‌های صفحه اصلی</h3></div>
+          <div class="card-body">
+            <div class="field"><label>متن نشان بالای تیتر (Badge)</label><input id="aBadge"></div>
+            <div class="field"><label>تیتر اصلی صفحه</label><input id="aTitle"></div>
+            <div class="field">
+              <label>عبارت هایلایت‌شده داخل تیتر</label>
+              <input id="aHl" placeholder="بخشی از تیتر که با رنگ تأکیدی مشخص شود">
+              <div style="font-size:.74rem;color:var(--text-2);margin-top:4px">دقیقاً باید بخشی از تیتر بالا باشد، مثلاً: مراکز درمانی</div>
+            </div>
+            <div class="field"><label>پاراگراف معرفی (زیر خط ضربان)</label><textarea id="aLead" rows="3" style="width:100%;border:1.5px solid var(--line);border-radius:13px;padding:11px 15px;outline:0;background:#fff;resize:vertical"></textarea></div>
+            <div class="field"><label>متن فوتر</label><input id="aFooter"></div>
+          </div>
+        </div>
+
+        <div class="set-card">
+          <div class="card-head"><h3>راه‌های ارتباطی (نمایش در سایت)</h3></div>
+          <div class="card-body">
+            <div class="field"><label>تلفن تماس ۱</label><input id="aPhone1" dir="ltr" placeholder="+98912..."></div>
+            <div class="field"><label>تلفن تماس ۲</label><input id="aPhone2" dir="ltr" placeholder="+98912..."></div>
+            <div class="field"><label>آدرس اینستاگرام</label><input id="aInsta" dir="ltr"></div>
+            <div class="field"><label>آدرس تلگرام</label><input id="aTg" dir="ltr"></div>
+          </div>
+        </div>
+
+        <div class="set-card">
+          <div class="card-head"><h3>ذخیره تغییرات</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <p style="font-size:.85rem;color:var(--text-2)">پس از ذخیره، تغییرات بلافاصله برای همه‌ی بازدیدکنندگان سایت اعمال می‌شود.</p>
+            <button class="btn btn-orange" id="saveAppearance">ذخیره و انتشار ظاهر سایت</button>
+            <button class="btn btn-line" id="resetAppearance">بازگشت به پیش‌فرض آمیتیس</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== تنظیمات سیستم ===== -->
+    <section class="page" id="page-settings">
+      <div class="set-grid">
+        <div class="set-card">
+          <div class="card-head"><h3>تغییر رمز عبور ادمین</h3></div>
+          <div class="card-body">
+            <div class="field"><label>رمز عبور جدید (حداقل ۸ کاراکتر)</label><input type="password" id="newPass" placeholder="••••••••"></div>
+            <button class="btn btn-navy" id="savePass">تغییر رمز عبور Supabase</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
-  <div class="tbl-wrap">
-    <table>
-      <thead><tr><th style="width:64px">کد</th><th>مشتری</th><th>موضوع</th><th>آخرین فعالیت</th><th>وضعیت</th><th></th></tr></thead>
-      <tbody id="tkRows"></tbody>
-    </table>
-    <div class="empty" id="tkEmpty" style="display:none">تیکتی یافت نشد.</div>
-  </div>
-</section>
+</div>
+</div>
 
 <!-- پنجره چت تیکت -->
 <div class="chat-overlay" id="chatOverlay">
@@ -421,237 +503,6 @@ tbody tr.unread-row td:first-child::before{content:'';position:absolute;inset-in
       </button>
     </div>
   </div>
-</div>
-    <section class="page" id="page-settings">
-      <!-- ===== ظاهر سایت ===== -->
-<section class="page" id="page-appearance">
-  <div class="apr-grid">
-
-    <div class="set-card">
-      <div class="card-head"><h3>رنگ‌بندی سایت</h3></div>
-
-      <div class="card-body">
-
-        <div class="color-row">
-          <input type="color" id="cOrange">
-
-          <div>
-            <div class="cl-name">رنگ تأکیدی (نارنجی)</div>
-            <div class="cl-val" id="cOrangeVal"></div>
-          </div>
-        </div>
-
-        <div class="color-row">
-          <input type="color" id="cNavy">
-
-          <div>
-            <div class="cl-name">رنگ اصلی متن و بخش تیره (سرمه‌ای)</div>
-            <div class="cl-val" id="cNavyVal"></div>
-          </div>
-        </div>
-
-        <div class="color-row">
-          <input type="color" id="cBg">
-
-          <div>
-            <div class="cl-name">رنگ پس‌زمینه (کرم)</div>
-            <div class="cl-val" id="cBgVal"></div>
-          </div>
-        </div>
-
-        <div class="presets">
-
-          <button class="preset"
-            onclick="applyPreset('#E98840','#182642','#F7F1E4')">
-
-            <i style="background:linear-gradient(135deg,#E98840 50%,#182642 50%)"></i>
-
-            پیش‌فرض آمیتیس
-          </button>
-
-          <button class="preset"
-            onclick="applyPreset('#D97A5A','#1F3A33','#F5EFE2')">
-
-            <i style="background:linear-gradient(135deg,#D97A5A 50%,#1F3A33 50%)"></i>
-
-            گلبهی / جنگلی
-          </button>
-
-          <button class="preset"
-            onclick="applyPreset('#C99A3C','#232B4A','#F7F3E8')">
-
-            <i style="background:linear-gradient(135deg,#C99A3C 50%,#232B4A 50%)"></i>
-
-            طلایی / سرمه‌ای
-          </button>
-
-        </div>
-
-        <div class="apr-preview" id="aprPreview">
-
-          <div class="pv-title">
-            نمونه‌ی زنده‌ی
-            <span class="pv-acc">رنگ‌بندی</span>
-            سایت
-          </div>
-
-          <div style="font-size:.8rem;opacity:.7;margin-top:4px">
-            تغییرات را همین‌جا ببینید و سپس ذخیره کنید.
-          </div>
-
-          <span class="pv-btn">
-            دکمه‌ی نمونه
-          </span>
-
-        </div>
-
-      </div>
-    </div>
-
-
-    <div class="set-card">
-
-      <div class="card-head">
-        <h3>متن‌های صفحه اصلی</h3>
-      </div>
-
-      <div class="card-body">
-
-        <div class="field">
-          <label>متن نشان بالای تیتر (Badge)</label>
-          <input id="aBadge">
-        </div>
-
-        <div class="field">
-          <label>تیتر اصلی صفحه</label>
-          <input id="aTitle">
-        </div>
-
-        <div class="field">
-          <label>عبارت هایلایت‌شده داخل تیتر</label>
-
-          <input
-            id="aHl"
-            placeholder="بخشی از تیتر که با رنگ تأکیدی مشخص شود"
-          >
-
-          <div style="font-size:.74rem;color:var(--text-2);margin-top:4px">
-            دقیقاً باید بخشی از تیتر بالا باشد، مثلاً: مراکز درمانی
-          </div>
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            پاراگراف معرفی (زیر خط ضربان)
-          </label>
-
-          <textarea
-            id="aLead"
-            rows="3"
-            style="width:100%;border:1.5px solid var(--line);border-radius:13px;padding:11px 15px;outline:0;background:#fff;resize:vertical"
-          ></textarea>
-
-        </div>
-
-        <div class="field">
-
-          <label>متن فوتر</label>
-
-          <input id="aFooter">
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="set-card">
-
-      <div class="card-head">
-        <h3>راه‌های ارتباطی (نمایش در سایت)</h3>
-      </div>
-
-      <div class="card-body">
-
-        <div class="field">
-          <label>تلفن تماس ۱</label>
-          <input id="aPhone1" dir="ltr" placeholder="+98912...">
-        </div>
-
-        <div class="field">
-          <label>تلفن تماس ۲</label>
-          <input id="aPhone2" dir="ltr" placeholder="+98912...">
-        </div>
-
-        <div class="field">
-          <label>آدرس اینستاگرام</label>
-          <input id="aInsta" dir="ltr">
-        </div>
-
-        <div class="field">
-          <label>آدرس تلگرام</label>
-          <input id="aTg" dir="ltr">
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="set-card">
-
-      <div class="card-head">
-        <h3>ذخیره تغییرات</h3>
-      </div>
-
-      <div
-        class="card-body"
-        style="display:flex;flex-direction:column;gap:10px"
-      >
-
-        <p style="font-size:.85rem;color:var(--text-2)">
-          پس از ذخیره، تغییرات بلافاصله برای همه‌ی بازدیدکنندگان سایت اعمال می‌شود.
-        </p>
-
-        <button class="btn btn-orange" id="saveAppearance">
-          ذخیره و انتشار ظاهر سایت
-        </button>
-
-        <button class="btn btn-line" id="resetAppearance">
-          بازگشت به پیش‌فرض آمیتیس
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-</section>
-      <div class="set-grid">
-        <div class="set-card">
-          <div class="card-head"><h3>راه‌های ارتباطی سایت</h3></div>
-          <div class="card-body">
-            <div class="field"><label>آدرس اینستاگرام</label><input type="url" id="setInsta" dir="ltr"></div>
-            <div class="field"><label>آدرس تلگرام</label><input type="url" id="setTg" dir="ltr"></div>
-            <div class="field"><label>شماره تماس</label><input type="tel" id="setPhone" dir="ltr"></div>
-            <button class="btn btn-navy" id="saveSettings">ذخیره تغییرات در دیتابیس</button>
-          </div>
-        </div>
-        <div class="set-card">
-          <div class="card-head"><h3>تغییر رمز عبور ادمین</h3></div>
-          <div class="card-body">
-            <div class="field"><label>رمز عبور جدید (حداقل ۸ کاراکتر)</label><input type="password" id="newPass" placeholder="••••••••"></div>
-            <button class="btn btn-navy" id="savePass">تغییر رمز عبور Supabase</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-</div>
 </div>
 
 <!-- مودال -->
@@ -675,13 +526,11 @@ const SUPABASE_URL = 'https://zvtfkpdzewmrkziyustg.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_MyCMnm_T2aFs80-Vyx_Fsw_d12s-BIT';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* متغیرهای داده‌ای */
-let msgs = [], srvs = [], settings = { insta: '', tg: '', phone: '' };
+let msgs = [], srvs = [], settings = {};
 let msgFilter = 'all', msgQ = '';
 
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 
-/* توست */
 let toastTimer;
 function toast(txt){
   const t = document.getElementById('toast');
@@ -691,7 +540,6 @@ function toast(txt){
   toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
 }
 
-/* جلوگیری از حملات XSS */
 function escapeHTML(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -701,7 +549,6 @@ function escapeHTML(value = '') {
     .replaceAll("'", '&#039;');
 }
 
-/* اعتبارسنجی و ایمن‌سازی URL */
 function safeURL(url) {
   if (!url) return '#';
   try {
@@ -709,9 +556,7 @@ function safeURL(url) {
     if (['http:', 'https:'].includes(parsed.protocol)) {
       return parsed.href;
     }
-  } catch (e) {
-    // در صورت نامعتبر بودن URL
-  }
+  } catch (e) {}
   return '#';
 }
 
@@ -742,7 +587,6 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   location.reload();
 });
 
-/* بررسی نشست ادمین */
 async function checkAuth() {
   const { data: { session } } = await db.auth.getSession();
   if (session) {
@@ -763,31 +607,19 @@ async function initPanel() {
 /* ================= 3. دریافت داده‌ها ================= */
 async function fetchMessages(){
   const { data, error } = await db.from('messages').select('*').order('created_at', { ascending: false });
-  if(error){
-    console.error(error);
-    toast('خطا در دریافت پیام‌ها');
-    return;
-  }
+  if(error){ console.error(error); return; }
   msgs = data || [];
 }
 
 async function fetchServices(){
   const { data, error } = await db.from('services').select('*').order('id', { ascending: true });
-  if(error){
-    console.error(error);
-    toast('خطا در دریافت خدمات');
-    return;
-  }
+  if(error){ console.error(error); return; }
   srvs = data || [];
 }
 
 async function fetchSettings(){
   const { data, error } = await db.from('settings').select('*');
-  if(error){
-    console.error(error);
-    toast('خطا در دریافت تنظیمات');
-    return;
-  }
+  if(error){ console.error(error); return; }
   if (data) {
     data.forEach(item => { settings[item.key] = item.value; });
   }
@@ -803,7 +635,7 @@ async function fetchAllData() {
   renderAll();
 }
 
-/* ================= 4. ناوبری و رابط کاربری ================= */
+/* ================= 4. ناوبری ================= */
 const PAGE_TITLES = {
   dash:'داشبورد',
   msgs:'صندوق پیام‌ها',
@@ -812,6 +644,7 @@ const PAGE_TITLES = {
   appearance:'ظاهر سایت',
   settings:'تنظیمات'
 };
+
 document.querySelectorAll('.sb-item').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
@@ -900,10 +733,7 @@ window.viewMsg = async id => {
 
   if(!m.read) {
     const { error } = await db.from('messages').update({ read: true }).eq('id', id);
-    if(error) {
-      toast('خطا در تغییر وضعیت پیام');
-      return;
-    }
+    if(error) { toast('خطا در تغییر وضعیت پیام'); return; }
     m.read = true;
     renderStats(); renderMsgs();
   }
@@ -923,17 +753,10 @@ window.viewMsg = async id => {
 
 window.delMsg = async id => {
   if(!confirm('آیا از حذف این پیام مطمئن هستید؟')) return;
-
   const { error } = await db.from('messages').delete().eq('id', id);
-  if(error){
-    console.error(error);
-    toast('حذف پیام انجام نشد.');
-    return;
-  }
-
+  if(error){ toast('حذف پیام انجام نشد.'); return; }
   msgs = msgs.filter(m=>m.id!==id);
-  renderAll(); 
-  toast('پیام با موفقیت حذف شد.');
+  renderAll(); toast('پیام حذف شد.');
 };
 
 /* ================= 7. مدیریت خدمات ================= */
@@ -955,11 +778,7 @@ function renderSrv(){
 
 window.toggleSrv = async (id, on) => {
   const { error } = await db.from('services').update({ active: on }).eq('id', id);
-  if(error){
-    toast('خطا در تغییر وضعیت خدمت');
-    fetchServices().then(renderSrv);
-    return;
-  }
+  if(error){ toast('خطا در تغییر وضعیت خدمت'); fetchServices().then(renderSrv); return; }
   const target = srvs.find(s=>s.id===id);
   if(target) target.active = on;
   renderStats(); toast(on ? 'خدمت فعال شد.' : 'خدمت غیرفعال شد.');
@@ -968,11 +787,7 @@ window.toggleSrv = async (id, on) => {
 window.delSrv = async id => {
   if(!confirm('آیا از حذف این خدمت مطمئن هستید؟')) return;
   const { error } = await db.from('services').delete().eq('id', id);
-  if(error){
-    console.error(error);
-    toast('حذف خدمت انجام نشد.');
-    return;
-  }
+  if(error){ toast('حذف خدمت انجام نشد.'); return; }
   srvs = srvs.filter(s=>s.id!==id);
   renderAll(); toast('خدمت حذف شد.');
 };
@@ -1013,64 +828,12 @@ window.saveSrv = async id => {
     ({ error } = await db.from('services').insert([{ title, description, active }]));
   }
 
-  if(error){
-    console.error(error);
-    toast('خطا در ذخیره اطلاعات خدمت');
-    return;
-  }
+  if(error){ toast('خطا در ذخیره اطلاعات خدمت'); return; }
 
   closeModal(); await fetchServices(); renderAll(); toast(id ? 'تغییرات ذخیره شد.' : 'خدمت جدید اضافه شد.');
 };
 
-/* ================= 8. تنظیمات و تغییر رمز عبور ================= */
-function loadSettingsFields() {
-  document.getElementById('setInsta').value = settings.insta || '';
-  document.getElementById('setTg').value = settings.tg || '';
-  document.getElementById('setPhone').value = settings.phone || '';
-}
-
-document.getElementById('saveSettings').addEventListener('click', async () => {
-  const insta = document.getElementById('setInsta').value.trim();
-  const tg = document.getElementById('setTg').value.trim();
-  const phone = document.getElementById('setPhone').value.trim();
-
-  const { error } = await db.from('settings').upsert([
-    { key: 'insta', value: insta },
-    { key: 'tg', value: tg },
-    { key: 'phone', value: phone }
-  ]);
-
-  if(error){
-    console.error(error);
-    toast('خطا در ذخیره تنظیمات');
-    return;
-  }
-
-  settings = { insta, tg, phone };
-  toast('تنظیمات در دیتابیس به‌روزرسانی شدند.');
-});
-
-document.getElementById('savePass').addEventListener('click', async () => {
-  const newPassword = document.getElementById('newPass').value.trim();
-
-  if(newPassword.length < 8){
-    toast('رمز عبور باید حداقل ۸ کاراکتر باشد.');
-    return;
-  }
-
-  const { error } = await db.auth.updateUser({ password: newPassword });
-
-  if(error){
-    console.error(error);
-    toast('تغییر رمز انجام نشد: ' + error.message);
-    return;
-  }
-
-  document.getElementById('newPass').value = '';
-  toast('رمز عبور با موفقیت تغییر کرد.');
-});
-
-  /* ================= تیکت‌ها ================= */
+/* ================= 8. تیکت‌ها ================= */
 let tickets = [], activeTk = null, tkFilter = 'all', tkQ = '';
 
 const TK_STATUS = {
@@ -1080,8 +843,7 @@ const TK_STATUS = {
 };
 
 async function fetchTickets(){
-  const { data, error } = await db.from('tickets')
-    .select('*').order('last_reply_at', { ascending: false });
+  const { data, error } = await db.from('tickets').select('*').order('last_reply_at', { ascending: false });
   if(error){ console.error(error); return; }
   tickets = data || [];
   renderTickets();
@@ -1126,7 +888,6 @@ function renderTickets(){
     </tr>`;
   }).join('');
 
-  // نشان «نیاز به پاسخ»
   const need = tickets.filter(t => t.status === 'open').length;
   const badge = document.getElementById('tkBadge');
   badge.textContent = fa(need);
@@ -1152,8 +913,7 @@ function setTkChip(st){
 
 async function loadTkMsgs(){
   if(!activeTk) return;
-  const { data: msgs } = await db.from('ticket_messages')
-    .select('*').eq('ticket_id', activeTk.id).order('created_at');
+  const { data: msgs } = await db.from('ticket_messages').select('*').eq('ticket_id', activeTk.id).order('created_at');
   const box = document.getElementById('chBody');
   const closed = activeTk.status === 'closed';
   let html = closed ? `<div class="closed-bar">این تیکت بسته شده است. با ارسال پیام، دوباره باز می‌شود.</div>` : '';
@@ -1171,12 +931,11 @@ async function sendReply(){
   const body = ta.value.trim();
   if(!body) return;
   ta.value = '';
-  const { error } = await db.from('ticket_messages')
-    .insert([{ ticket_id: activeTk.id, sender: 'admin', body }]);
+  const { error } = await db.from('ticket_messages').insert([{ ticket_id: activeTk.id, sender: 'admin', body }]);
   if(error){ toast('ارسال پاسخ انجام نشد.'); ta.value = body; return; }
   await loadTkMsgs();
   fetchTickets();
-  toast('پاسخ ارسال شد. اگر مشتری ۳ روز پاسخ ندهد، تیکت خودکار بسته می‌شود.');
+  toast('پاسخ ارسال شد.');
 }
 document.getElementById('chSend').addEventListener('click', sendReply);
 document.getElementById('chText').addEventListener('keydown', e => {
@@ -1204,292 +963,120 @@ window.delTicket = async id => {
   fetchTickets();
 };
 
-/* چت زنده: به‌روزرسانی خودکار بدون رفرش */
 function subscribeTickets(){
   db.channel('admin-tickets')
-    .on('postgres_changes', { event:'*', schema:'public', table:'tickets' },
-      () => { fetchTickets(); })
-    .on('postgres_changes', { event:'INSERT', schema:'public', table:'ticket_messages' },
-      p => { if(activeTk && p.new.ticket_id === activeTk.id){ loadTkMsgs(); fetchTickets(); } })
+    .on('postgres_changes', { event:'*', schema:'public', table:'tickets' }, () => { fetchTickets(); })
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'ticket_messages' }, p => {
+      if(activeTk && p.new.ticket_id === activeTk.id){ loadTkMsgs(); fetchTickets(); }
+    })
     .subscribe();
 }
-  /* ================= ظاهر سایت ================= */
 
+/* ================= 9. ظاهر سایت ================= */
 const APPEARANCE_DEFAULTS = {
-  color_orange:'#E98840',
-  color_navy:'#182642',
-  color_bg:'#F7F1E4',
-
+  color_orange:'#E98840', color_navy:'#182642', color_bg:'#F7F1E4',
   badge_text:'گروه مشاوران آمیتیس · مشاوره تخصصی صنعت سلامت',
-
   hero_title:'از ایده تا بهره‌برداری، همراهِ مراکز درمانی شما',
-
   hero_hl:'مراکز درمانی',
-
   hero_lead:'گروه مشاوران آمیتیس، متشکل از کارشناسان و بازنشستگان مجرب برجسته‌ی حوزه‌ی بیمارستانی با سوابق مدیریتی و نظارتی در سطوح عالی؛ آماده‌ی ارائه‌ی خدمات تخصصی در صنعت سلامت است.',
-
   footer_text:'© گروه مشاوران آمیتیس — مشاوره تخصصی صنعت سلامت · تمامی حقوق محفوظ است.',
-
-  phone1:'+989121441326',
-  phone2:'+989125140982',
-
-  insta:'https://www.instagram.com/amitis_company_/',
-  tg:'https://t.me/amitis_campany'
+  phone1:'+989121441326', phone2:'+989125140982',
+  insta:'https://www.instagram.com/amitis_company_/', tg:'https://t.me/amitis_campany'
 };
 
-
 function renderAppearance(){
-
-  const s = {
-    ...APPEARANCE_DEFAULTS,
-    ...settings
-  };
-
+  const s = { ...APPEARANCE_DEFAULTS, ...settings };
   document.getElementById('cOrange').value = s.color_orange;
-
-  document.getElementById('cNavy').value = s.color_navy;
-
-  document.getElementById('cBg').value = s.color_bg;
-
-  document.getElementById('aBadge').value = s.badge_text;
-
-  document.getElementById('aTitle').value = s.hero_title;
-
-  document.getElementById('aHl').value = s.hero_hl;
-
-  document.getElementById('aLead').value = s.hero_lead;
-
+  document.getElementById('cNavy').value   = s.color_navy;
+  document.getElementById('cBg').value     = s.color_bg;
+  document.getElementById('aBadge').value  = s.badge_text;
+  document.getElementById('aTitle').value  = s.hero_title;
+  document.getElementById('aHl').value     = s.hero_hl;
+  document.getElementById('aLead').value   = s.hero_lead;
   document.getElementById('aFooter').value = s.footer_text;
-
   document.getElementById('aPhone1').value = s.phone1;
-
   document.getElementById('aPhone2').value = s.phone2;
-
-  document.getElementById('aInsta').value = s.insta;
-
-  document.getElementById('aTg').value = s.tg;
-
-  updateColorVals();
-
-  updatePreview();
+  document.getElementById('aInsta').value  = s.insta;
+  document.getElementById('aTg').value     = s.tg;
+  updateColorVals(); updatePreview();
 }
-
 
 function updateColorVals(){
-
-  document.getElementById('cOrangeVal').textContent =
-    document.getElementById('cOrange').value;
-
-  document.getElementById('cNavyVal').textContent =
-    document.getElementById('cNavy').value;
-
-  document.getElementById('cBgVal').textContent =
-    document.getElementById('cBg').value;
+  document.getElementById('cOrangeVal').textContent = document.getElementById('cOrange').value;
+  document.getElementById('cNavyVal').textContent   = document.getElementById('cNavy').value;
+  document.getElementById('cBgVal').textContent     = document.getElementById('cBg').value;
 }
 
-
 ['cOrange','cNavy','cBg'].forEach(id => {
-
-  document.getElementById(id).addEventListener(
-    'input',
-    () => {
-
-      updateColorVals();
-
-      updatePreview();
-
-    }
-  );
-
+  document.getElementById(id).addEventListener('input', () => { updateColorVals(); updatePreview(); });
 });
 
-
 function updatePreview(){
-
   const p = document.getElementById('aprPreview');
-
   const o = document.getElementById('cOrange').value;
-
   const n = document.getElementById('cNavy').value;
-
   const b = document.getElementById('cBg').value;
-
   p.style.setProperty('--pv-orange', o);
-
   p.style.setProperty('--pv-navy', n);
-
   p.style.setProperty('--pv-cream', b);
-
   p.style.background = b;
-
   p.style.color = n;
 }
 
-
 window.applyPreset = (o,n,b) => {
-
   document.getElementById('cOrange').value = o;
-
   document.getElementById('cNavy').value = n;
-
   document.getElementById('cBg').value = b;
-
-  updateColorVals();
-
-  updatePreview();
-
+  updateColorVals(); updatePreview();
 };
 
+document.getElementById('saveAppearance').addEventListener('click', async () => {
+  const payload = [
+    { key:'color_orange', value: document.getElementById('cOrange').value },
+    { key:'color_navy',   value: document.getElementById('cNavy').value },
+    { key:'color_bg',     value: document.getElementById('cBg').value },
+    { key:'badge_text',   value: document.getElementById('aBadge').value.trim() },
+    { key:'hero_title',   value: document.getElementById('aTitle').value.trim() },
+    { key:'hero_hl',      value: document.getElementById('aHl').value.trim() },
+    { key:'hero_lead',    value: document.getElementById('aLead').value.trim() },
+    { key:'footer_text',  value: document.getElementById('aFooter').value.trim() },
+    { key:'phone1',       value: document.getElementById('aPhone1').value.trim() },
+    { key:'phone2',       value: document.getElementById('aPhone2').value.trim() },
+    { key:'insta',        value: document.getElementById('aInsta').value.trim() },
+    { key:'tg',           value: document.getElementById('aTg').value.trim() },
+  ];
+  const { error } = await db.from('settings').upsert(payload);
+  if(error){ toast('خطا در ذخیره ظاهر سایت'); return; }
+  payload.forEach(p => settings[p.key] = p.value);
+  toast('ظاهر سایت ذخیره و منتشر شد.');
+});
 
-document.getElementById('saveAppearance').addEventListener(
-  'click',
-  async () => {
+document.getElementById('resetAppearance').addEventListener('click', async () => {
+  if(!confirm('همه‌ی رنگ‌ها و متن‌ها به حالت پیش‌فرض برمی‌گردند. مطمئن هستید؟')) return;
+  const payload = Object.entries(APPEARANCE_DEFAULTS).map(([key,value]) => ({key, value}));
+  const { error } = await db.from('settings').upsert(payload);
+  if(error){ toast('خطا در بازنشانی'); return; }
+  Object.assign(settings, APPEARANCE_DEFAULTS);
+  renderAppearance();
+  toast('به حالت پیش‌فرض بازگشت.');
+});
 
-    const payload = [
+/* ================= ۱۰. تغییر رمز عبور ================= */
+document.getElementById('savePass').addEventListener('click', async () => {
+  const newPassword = document.getElementById('newPass').value.trim();
+  if(newPassword.length < 8){ toast('رمز عبور باید حداقل ۸ کاراکتر باشد.'); return; }
+  const { error } = await db.auth.updateUser({ password: newPassword });
+  if(error){ toast('تغییر رمز انجام نشد: ' + error.message); return; }
+  document.getElementById('newPass').value = '';
+  toast('رمز عبور با موفقیت تغییر کرد.');
+});
 
-      {
-        key:'color_orange',
-        value:document.getElementById('cOrange').value
-      },
-
-      {
-        key:'color_navy',
-        value:document.getElementById('cNavy').value
-      },
-
-      {
-        key:'color_bg',
-        value:document.getElementById('cBg').value
-      },
-
-      {
-        key:'badge_text',
-        value:document.getElementById('aBadge').value.trim()
-      },
-
-      {
-        key:'hero_title',
-        value:document.getElementById('aTitle').value.trim()
-      },
-
-      {
-        key:'hero_hl',
-        value:document.getElementById('aHl').value.trim()
-      },
-
-      {
-        key:'hero_lead',
-        value:document.getElementById('aLead').value.trim()
-      },
-
-      {
-        key:'footer_text',
-        value:document.getElementById('aFooter').value.trim()
-      },
-
-      {
-        key:'phone1',
-        value:document.getElementById('aPhone1').value.trim()
-      },
-
-      {
-        key:'phone2',
-        value:document.getElementById('aPhone2').value.trim()
-      },
-
-      {
-        key:'insta',
-        value:document.getElementById('aInsta').value.trim()
-      },
-
-      {
-        key:'tg',
-        value:document.getElementById('aTg').value.trim()
-      }
-
-    ];
-
-
-    const { error } =
-      await db.from('settings').upsert(payload);
-
-
-    if(error){
-
-      console.error(error);
-
-      toast('خطا در ذخیره ظاهر سایت');
-
-      return;
-
-    }
-
-
-    payload.forEach(p => {
-
-      settings[p.key] = p.value;
-
-    });
-
-
-    toast('ظاهر سایت ذخیره و منتشر شد.');
-
-  }
-);
-
-
-document.getElementById('resetAppearance').addEventListener(
-  'click',
-  async () => {
-
-    if(
-      !confirm(
-        'همه‌ی رنگ‌ها و متن‌ها به حالت پیش‌فرض آمیتیس برمی‌گردند. مطمئن هستید؟'
-      )
-    ) return;
-
-
-    const payload =
-      Object.entries(APPEARANCE_DEFAULTS)
-      .map(([key,value]) => ({
-        key,
-        value
-      }));
-
-
-    const { error } =
-      await db.from('settings').upsert(payload);
-
-
-    if(error){
-
-      toast('خطا در بازنشانی');
-
-      return;
-
-    }
-
-
-    Object.assign(
-      settings,
-      APPEARANCE_DEFAULTS
-    );
-
-
-    renderAppearance();
-
-
-    toast('به حالت پیش‌فرض بازگشت.');
-
-  }
-);
-/* ================= 9. اجرای نهایی ================= */
+/* ================= ۱۱. اجرای نهایی ================= */
 function renderAll(){
   renderStats(); 
   renderDashMsgs(); 
   renderMsgs(); 
   renderSrv();
-  loadSettingsFields();
   renderAppearance();
 }
 </script>
